@@ -33,40 +33,68 @@ export const Gameboard = () => {
         return Math.floor(Math.random() * n) + 1;
     }
     let occupiedPos = []; //occupied coordinate positions -- tracks what is available or not
+    function coordinate(x, y) {
+        this.x = x;
+        this.y = y;
+    }
     //assign coordinates to a ship
     const assignCoordinates = (len, bh) => {
         let arr = [];
+        let isCoordinatesTaken = false;
         const x = randomNumGen(len); //results to an integer between 0 and (h/w - length of ship)
-        const y = Math.floor(Math.random() * bh - 1) + 1; //output would be integer between 0 and 9
+        const y = Math.floor(Math.random() * bh); //output would be integer between 0 and 9
         const n1 = Math.round(Math.random()); //between 0 and 1
         const n2 = betweenTwoNumbers(n1); //return 0 or 1 dependent to the output of n1
-        for (let i = 0; i < len; i++){
-            const xy = [x+i,y];
-            arr.push(xy[n1],xy[n2]);
+        for (let i = 0; i < len; i++) {
+            const xy = [x + i, y];
+            arr.push(new coordinate(xy[n1], xy[n2]));
+        }
+        //check whether the following coordinates existed already
+        isCoordinatesTaken = validateCoordinates(x, y, len, n1);
+        //call this function again when the coordinate is taken, otherwise, proceed to the process
+        if(isCoordinatesTaken === true){
+            console.log('recursion succeeded, what now?');
+            assignCoordinates(len, bh) //idk what is this, yeah whatever
         }
         return arr;
     }
+    //add the ships and its coordinates to the ship holder
     const addShipsToTheBoard = (ships) => {
         const obj = [];
-        const occupied = [];
-        for(let i = 0; i < ships.length; i++){
+        for (let i = 0; i < ships.length; i++) {
             const name = ships[i][0];
             const length = ships[i][1];
             const pos = assignCoordinates(length, height);
-            occupied.push(pos);
-            const ship = Ship(name,length);
-            obj.push(ship,pos);
+            occupiedPos.push(...pos);
+            const ship = Ship(name, length);
+            obj.push(ship, pos);
         }
-        occupiedPos.push(occupied);
         return obj;
     }
+    const validateCoordinates = (x, y, len, n1) => { 
+        if (occupiedPos.length === 0 ) { return false; }
+        return occupiedPos.every(function (o) {
+            // console.log(x, y);
+            // console.log(len, n1);
+            if (n1 === 0) {
+                console.log(o.x,o.y);
+                return (o.x === x && o.x < x + len) && o.y === y;
+            } else { 
+                return (o.x === x && o.x < x + len) && o.y === y; 
+            }
+        })
+    }
+    //An array to keep the ship factories and its board positions
     const shipsOnTheBoard = addShipsToTheBoard(shipClasses);
+    //get mutable variables
     const getOccupiedPos = () => { return occupiedPos; }
     return {
         randomNumGen,
         shipsOnTheBoard,
         board,
-        getOccupiedPos
+        getOccupiedPos,
+        currentTotalShips,
+        validateCoordinates
     }
 }
 
