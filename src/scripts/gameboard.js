@@ -54,7 +54,8 @@ export const Gameboard = () => {
         //call this function again when the coordinate is taken, otherwise, proceed to the process
         if(isCoordinatesTaken === true){
             console.log('recursion succeeded, what now?');
-            assignCoordinates(len, bh) //idk what is this, yeah whatever
+            console.log(x, y);
+            return assignCoordinates(len, bh) //idk what is this, yeah whatever
         }
         return arr;
     }
@@ -73,16 +74,7 @@ export const Gameboard = () => {
     }
     const validateCoordinates = (x, y, len, n1) => { 
         if (occupiedPos.length === 0 ) { return false; }
-        return occupiedPos.every(function (o) {
-            // console.log(x, y);
-            // console.log(len, n1);
-            if (n1 === 0) {
-                console.log(o.x,o.y);
-                return (o.x === x && o.x < x + len) && o.y === y;
-            } else { 
-                return (o.x === x && o.x < x + len) && o.y === y; 
-            }
-        })
+        return occupiedPos.some(o => n1 === 0 ? (o.x >= x && o.x <= x + len) && o.y === y : (o.y >= x && o.y <= x + len) && o.x === y);
     }
     //An array to keep the ship factories and its board positions
     const shipsOnTheBoard = addShipsToTheBoard(shipClasses);
@@ -94,6 +86,7 @@ export const Gameboard = () => {
         board,
         getOccupiedPos,
         currentTotalShips,
+        coordinate,
         validateCoordinates
     }
 }
