@@ -1,13 +1,5 @@
 const Ship = require('../scripts/ship.js');
 
-test('correct name', () => {
-    const current = Ship('Carrier', 5);
-    expect(current.getName()).toBe('Carrier');
-})
-test('correct health', () => {
-    const current = Ship('Carrier', 5);
-    expect(current.getHealth()).toBe(5);
-})
 test('ship damage after hit', () => {
     const current = Ship('Carrier', 5);
     current.hit();

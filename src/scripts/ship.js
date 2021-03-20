@@ -17,6 +17,7 @@ const Ship = (name, health) => { //health and length are synonymous based on the
         getHealth,
         getCurrentState,
         hit,
+        isSunk,
     }
 }
 

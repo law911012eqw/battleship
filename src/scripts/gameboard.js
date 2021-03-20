@@ -24,8 +24,8 @@ const shipClasses = [
     ['Destroyer', 2]
 ]
 export const Gameboard = () => {
-    const height = 10;
-    const width = 10;
+    const height = 10; //immutable board height
+    const width = 10; //mutable board width
     let currentTotalShips = shipClasses.length;
     const board = twoDimensionalArrayGenerator(height, width); //A 2d array-ish for coodinations
     const randomNumGen = (len) => { //
@@ -36,6 +36,18 @@ export const Gameboard = () => {
     function coordinate(x, y) {
         this.x = x;
         this.y = y;
+    }
+    const missedAtks = [];
+
+    const isAllShipsGone = () => {
+        return currentTotalShips === 0 ? 1 : 0;
+    }
+
+    //Either sunk or not sunk
+    const checkShipState = (ship) => {
+        if (ship.ship.getCurrentState() === 'sunk') {
+            currentTotalShips -= 1;
+        }
     }
     //assign coordinates to a ship
     const assignCoordinates = (len, bh) => {
@@ -49,16 +61,15 @@ export const Gameboard = () => {
             const xy = [x + i, y];
             arr.push(new coordinate(xy[n1], xy[n2]));
         }
-        //check whether the following coordinates existed already
         isCoordinatesTaken = validateCoordinates(x, y, len, n1);
         //call this function again when the coordinate is taken, otherwise, proceed to the process
-        if(isCoordinatesTaken === true){
+        if (isCoordinatesTaken === true) {
             console.log('recursion succeeded, what now?');
-            console.log(x, y);
-            return assignCoordinates(len, bh) //idk what is this, yeah whatever
+            return assignCoordinates(len, bh) //restart the function
         }
         return arr;
     }
+
     //add the ships and its coordinates to the ship holder
     const addShipsToTheBoard = (ships) => {
         const obj = [];
@@ -68,32 +79,79 @@ export const Gameboard = () => {
             const pos = assignCoordinates(length, height);
             occupiedPos.push(...pos);
             const ship = Ship(name, length);
-            obj.push(ship, pos);
+            obj.push({
+                ship: ship,
+                pos: pos,
+            });
         }
         return obj;
     }
-    const validateCoordinates = (x, y, len, n1) => { 
-        if (occupiedPos.length === 0 ) { return false; }
+
+    //check whether the following coordinates existed already
+    const validateCoordinates = (x, y, len, n1) => {
+        if (occupiedPos.length === 0) { return false; }
         return occupiedPos.some(o => n1 === 0 ? (o.x >= x && o.x <= x + len) && o.y === y : (o.y >= x && o.y <= x + len) && o.x === y);
     }
+
+    const receiveAttack = (x, y, ships) => {
+        if (x > height && y > height){
+            return;
+        }
+        if (!board[x][y][1]) {
+            board[x][y][1] = !board[x][y][1];
+            const attackMissed = isShipGotHit(x, y, ships);
+            if (attackMissed === true) {
+                missedAtks.push({
+                    x: x,
+                    y: y
+                })
+            }
+        }
+        isAllShipsGone();
+    }
+
+    // const receiveDamage = (dmg, s) => {
+    //     for(let i = 0; i <= dmg; i++){
+    //         s.ship.hit();
+    //     }
+    // }
+    const isShipGotHit = (x, y, ships) => {
+        console.log(x, y);
+        //let dmgCounter = 0;
+        for (const ship of ships) {
+            for (const pos of ship.pos) {
+                console.log(pos.x, pos.y);
+                if (pos.x === x && pos.y === y) {
+                    console.log('Ship got hit');
+                    console.log(ship.ship.getName());
+                    ship.ship.hit();
+                    checkShipState(ship);
+                    return false;
+                }
+            }
+            // receiveDamage(dmgCounter, ship);
+            // dmgCounter = 0;
+        }
+        return true;
+    }
     //An array to keep the ship factories and its board positions
-    const shipsOnTheBoard = addShipsToTheBoard(shipClasses);
+    let shipsOnTheBoard = addShipsToTheBoard(shipClasses);
+
     //get mutable variables
     const getOccupiedPos = () => { return occupiedPos; }
+    const getBoard = () => { return board; }
     return {
         randomNumGen,
         shipsOnTheBoard,
         board,
-        getOccupiedPos,
+        missedAtks,
         currentTotalShips,
-        coordinate,
-        validateCoordinates
+        validateCoordinates,
+        receiveAttack,
+        isShipGotHit,
+        getOccupiedPos,
+        getBoard,
     }
 }
-
-const board = Gameboard();
-console.log(board.randomNumGen(7));
-console.log(board.shipsOnTheBoard);
-console.log(board.getOccupiedPos());
 
 module.exports = Gameboard;
