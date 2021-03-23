@@ -1,32 +1,32 @@
 import Ship from './ship.js'
 
-const twoDimensionalArrayGenerator = (outerLen, innerLen) => {
-    let arr = [];
-    for (let i = 0; i < outerLen; i++) {
-        let data = [];
-        for (let j = 0; j < innerLen; j++) {
-            let shipInfo = [];
-            //name coordinate for the board e.g arr[0][7][0] would be A7
-            shipInfo.push(`${String.fromCharCode(65 + i)}${j + 1}`, 0)
-            data.push(shipInfo);
-        }
-        arr.push(data);
-    }
-    return arr;
-}
-const betweenTwoNumbers = (x) => { return x > 0.5 ? 0 : 1; }
-//default sets of ships
-const shipClasses = [
-    ['Carrier', 5],
-    ['Battleship', 4],
-    ['Cruiser', 3],
-    ['Submariner', 3],
-    ['Destroyer', 2]
-]
 export const Gameboard = () => {
     const height = 10; //immutable board height
     const width = 10; //mutable board width
-    let currentTotalShips = shipClasses.length;
+    //default sets of ships
+    const shipClasses = [
+        ['Carrier', 5],
+        ['Battleship', 4],
+        ['Cruiser', 3],
+        ['Submariner', 3],
+        ['Destroyer', 2]
+    ]
+    const twoDimensionalArrayGenerator = (outerLen, innerLen) => {
+        let arr = [];
+        for (let i = 0; i < outerLen; i++) {
+            let data = [];
+            for (let j = 0; j < innerLen; j++) {
+                let shipInfo = [];
+                //name coordinate for the board e.g arr[0][7][0] would be A7
+                shipInfo.push(`${String.fromCharCode(65 + i)}${j + 1}`, 0)
+                data.push(shipInfo);
+            }
+            arr.push(data);
+        }
+        return arr;
+    }
+    const betweenTwoNumbers = (x) => { return x > 0.5 ? 0 : 1; }
+
     const board = twoDimensionalArrayGenerator(height, width); //A 2d array-ish for coodinations
     const randomNumGen = (len) => { //
         const n = (10 - len);
@@ -39,16 +39,6 @@ export const Gameboard = () => {
     }
     const missedAtks = [];
 
-    const isAllShipsGone = () => {
-        return currentTotalShips === 0 ? 1 : 0;
-    }
-
-    //Either sunk or not sunk
-    const checkShipState = (ship) => {
-        if (ship.ship.getCurrentState() === 'sunk') {
-            currentTotalShips -= 1;
-        }
-    }
     //assign coordinates to a ship
     const assignCoordinates = (len, bh) => {
         let arr = [];
@@ -93,12 +83,28 @@ export const Gameboard = () => {
         return occupiedPos.some(o => n1 === 0 ? (o.x >= x && o.x <= x + len) && o.y === y : (o.y >= x && o.y <= x + len) && o.x === y);
     }
 
+    //An array to keep the ship factories and its board positions
+    const shipsOnTheBoard = addShipsToTheBoard(shipClasses);
+    let currentTotalShips = shipsOnTheBoard.length;
+
+    //check if all ships are gone or not
+    const isAllShipsGone = () => {
+        return currentTotalShips === 0 ? 1 : 0;
+    }
+
+    //Either sunk or not sunk
+    const checkShipState = (ship) => {
+        if (ship.ship.getCurrentState() === 'sunk') {
+            currentTotalShips -= 1;
+        }
+    }
+
     const receiveAttack = (x, y, ships) => {
-        if (x > height && y > height){
+        if (x > height && y > height) {
             return;
         }
         if (!board[x][y][1]) {
-            board[x][y][1] = !board[x][y][1];
+            board[x][y][1] = 1 - board[x][y][1];
             const attackMissed = isShipGotHit(x, y, ships);
             if (attackMissed === true) {
                 missedAtks.push({
@@ -110,37 +116,26 @@ export const Gameboard = () => {
         isAllShipsGone();
     }
 
-    // const receiveDamage = (dmg, s) => {
-    //     for(let i = 0; i <= dmg; i++){
-    //         s.ship.hit();
-    //     }
-    // }
     const isShipGotHit = (x, y, ships) => {
-        console.log(x, y);
-        //let dmgCounter = 0;
         for (const ship of ships) {
             for (const pos of ship.pos) {
-                console.log(pos.x, pos.y);
                 if (pos.x === x && pos.y === y) {
-                    console.log('Ship got hit');
-                    console.log(ship.ship.getName());
                     ship.ship.hit();
                     checkShipState(ship);
                     return false;
                 }
             }
-            // receiveDamage(dmgCounter, ship);
-            // dmgCounter = 0;
         }
         return true;
     }
-    //An array to keep the ship factories and its board positions
-    let shipsOnTheBoard = addShipsToTheBoard(shipClasses);
 
     //get mutable variables
     const getOccupiedPos = () => { return occupiedPos; }
     const getBoard = () => { return board; }
+    const getCurrentTotalShips = () => { return currentTotalShips; }
     return {
+        height,
+        width,
         randomNumGen,
         shipsOnTheBoard,
         board,
@@ -151,6 +146,7 @@ export const Gameboard = () => {
         isShipGotHit,
         getOccupiedPos,
         getBoard,
+        getCurrentTotalShips
     }
 }
 
