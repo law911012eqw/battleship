@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Battlefield",
+  "name": "A simple recreation of battlefield game",
   "icons": [
     {
       "src": "favicon.ico",

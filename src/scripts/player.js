@@ -1,4 +1,4 @@
-import Gameboard from './gameboard.js';
+import Gameboard from './gameboard';
 
 export const Player = (initialTurn, player, difficulty) => {
     let turn = initialTurn;
@@ -22,6 +22,10 @@ export const Player = (initialTurn, player, difficulty) => {
         return newArr;
     }
 
+    const selectedAtk = (x,y) => {
+        return [x,y];
+    }
+    //array of legal attacks - used by an AI
     const aiLegalAtks = randomPlays(gameboard.height, gameboard.width);
 
     const aiMove = (moves) => {
@@ -37,7 +41,8 @@ export const Player = (initialTurn, player, difficulty) => {
         turn,
         togglePlayerTurn,
         aiMove,
-        aiLegalAtks
+        aiLegalAtks,
+        selectedAtk
     }
 }
 

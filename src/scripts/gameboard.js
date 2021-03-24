@@ -1,4 +1,4 @@
-import Ship from './ship.js'
+import Ship from './ship'
 
 export const Gameboard = () => {
     const height = 10; //immutable board height
