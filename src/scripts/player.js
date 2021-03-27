@@ -45,5 +45,3 @@ export const Player = (initialTurn, player, difficulty) => {
         selectedAtk
     }
 }
-
-module.exports = Player;

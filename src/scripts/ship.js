@@ -5,7 +5,7 @@ const Ship = (name, health) => { //health and length are synonymous based on the
     const getHealth= () => currentHealth;
     const getCurrentState = () => currentState;
     const isSunk = () => {
-        currentHealth === 0 ? currentState = 'sunk' : null;
+        return currentHealth === 0 ? currentState = 'sunk' : null;
     }
     const hit = () => {
         currentHealth -= 1;
@@ -21,5 +21,4 @@ const Ship = (name, health) => { //health and length are synonymous based on the
     }
 }
 
-module.exports = Ship;
 export default Ship;

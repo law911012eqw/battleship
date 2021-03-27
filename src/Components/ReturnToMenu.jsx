@@ -1,25 +1,16 @@
-import { BrowserRouter as Router, Switch, Link, Route } from 'react-router-dom'
+import { useHistory, Link } from 'react-router-dom'
 
-import Menu from './Menu';
 export default function ReturnToMenu() {
+    const history = useHistory();
+
+    function handleClick() {
+        history.push('/battleship/');
+    }
     return (
-        <Router>
-            <div>
-                <ul>
-                    <li>
-                        <Link
-                            to="/battlefield/"
-                        >
-                            Return to Menu
-                    </Link>
-                    </li>
-                </ul>
-                <Switch>
-                    <Route>
-                        <Menu />
-                    </Route>
-                </Switch>
-            </div>
-        </Router>
+        <li id="Return" onClick={handleClick}>
+            <Link>
+                Return to Menu
+            </Link>
+        </li>
     )
 }

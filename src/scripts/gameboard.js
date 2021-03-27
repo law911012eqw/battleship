@@ -1,6 +1,6 @@
 import Ship from './ship'
 
-export const Gameboard = () => {
+export default function Gameboard(){
     const height = 10; //immutable board height
     const width = 10; //mutable board width
     //default sets of ships
@@ -149,5 +149,3 @@ export const Gameboard = () => {
         getCurrentTotalShips
     }
 }
-
-module.exports = Gameboard;

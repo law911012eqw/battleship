@@ -6,7 +6,20 @@
   display: flex;
   flex-direction: column;
 }
-#nav-menu > ul{
+ul, li{
   list-style-type: none;
   text-align: start;
+  cursor: pointer;
+}
+.cv{
+  border: 1px solid black;
+}
+#Return{
+  margin: 22px;
+}
+/*** Battle Section ***/
+#main-battle{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
 }
