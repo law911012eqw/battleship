@@ -1,7 +1,7 @@
 import React from 'react';
 
 import ReturnToMenu from './ReturnToMenu';
-export default function Settings(){
+export default function Settings(setGamemode, setMax){
     return(
         <div id="Settings">
             <ReturnToMenu />

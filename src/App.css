@@ -1,7 +1,6 @@
 .App {
   text-align: center;
 }
-
 #nav-menu{
   display: flex;
   flex-direction: column;
@@ -12,14 +11,29 @@ ul, li{
   cursor: pointer;
 }
 .cv{
-  border: 1px solid black;
+  box-shadow: 2px 2px 8px 0 rgba(56, 56, 56, 0.699);
 }
 #Return{
   margin: 22px;
+  color: rgb(7,67,114);
+}
+#Return:hover{
+  text-decoration: underline;
 }
 /*** Battle Section ***/
 #main-battle{
   display: flex;
   flex-direction: row;
   justify-content: space-around;
+}
+.canvas-container{
+  display: flex;
+  flex-direction: row;
+}
+.player-resource-container{
+  margin: 0 25px;
+}
+
+.fas{
+  color: rgb(7,67,114);
 }

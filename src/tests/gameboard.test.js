@@ -1,5 +1,5 @@
-const Gameboard = require('../scripts/gameboard.js');
-const Ship = require('../scripts/ship.js');
+import Gameboard from '../scripts/gameboard';
+import Ship from '../scripts/ship';
 
 //custom matchers
 expect.extend({
@@ -21,16 +21,16 @@ expect.extend({
     }
 });
 test('Set coordinates for each tiles in a board', () => {
-    const board = Gameboard();
+    const board = Gameboard(10);
     const arr = board.board;
     expect(arr[0][7][0]).toBe('A8');
 })
 test('All coordinates should be unique', () => {
-    const board = Gameboard();
+    const board = Gameboard(10);
     expect(board.getOccupiedPos()).toBeDistinct();
 })
 test('A coordinate hit availability should be toggled', () => {
-    const board = Gameboard();
+    const board = Gameboard(10);
     const ships = [
         {
             ship: Ship('Destroyer', 2),
@@ -45,7 +45,7 @@ test('A coordinate hit availability should be toggled', () => {
     expect(board.board[4][6][1] && board.board[4][2][1]).toBeTruthy();
 })
 test('Ship should receive a damage after the attack', () => {
-    const board = Gameboard();
+    const board = Gameboard(10);
     const ships = [
         {
             ship: Ship('Carrier', 5),
@@ -65,7 +65,7 @@ test('Ship should receive a damage after the attack', () => {
     expect(ships[0].ship.getHealth()).toEqual(3);
 })
 test('Record the missed attacks', () => {
-    const board = Gameboard();
+    const board = Gameboard(10);
     const ships = [
         {
             ship: Ship('Carrier', 5),
@@ -87,7 +87,7 @@ test('Record the missed attacks', () => {
     expect(board.missedAtks.length).toEqual(3);
 })
 test('Should change the number of current ships after one sunk',()=>{
-    const board = Gameboard();
+    const board = Gameboard(10);
     const ships = board.shipsOnTheBoard;
     const lastShip = ships[ships.length - 1].pos;
     board.receiveAttack(lastShip[1].x, lastShip[1].y, ships);

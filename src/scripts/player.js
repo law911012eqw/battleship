@@ -1,15 +1,15 @@
 import Gameboard from './gameboard';
 
-export const Player = (initialTurn, player, difficulty) => {
+export default function Player(initialTurn, player, difficulty, size) {
     let turn = initialTurn;
     const isHuman = player;
-
+    let isWinner = false;
     //Only applies to AI
     const AILEVEL = difficulty; // 1 or 2
     const randomNum = (n) => {
         return Math.floor(Math.random() * n);
     }
-    const gameboard = Gameboard();
+    const gameboard = Gameboard(size);
 
     //Use to iterate coordinates to be used as a legal attack for AI
     const randomPlays = (h, w) => {
@@ -22,8 +22,8 @@ export const Player = (initialTurn, player, difficulty) => {
         return newArr;
     }
 
-    const selectedAtk = (x,y) => {
-        return [x,y];
+    const selectedAtk = (x, y) => {
+        return [x, y];
     }
     //array of legal attacks - used by an AI
     const aiLegalAtks = randomPlays(gameboard.height, gameboard.width);
@@ -36,12 +36,17 @@ export const Player = (initialTurn, player, difficulty) => {
         }
     }
     const togglePlayerTurn = (turn) => { return !turn; }
+    const getIsWinner = () => {
+        return isWinner;
+    }
     return {
         gameboard,
         turn,
         togglePlayerTurn,
         aiMove,
         aiLegalAtks,
-        selectedAtk
+        selectedAtk,
+        getIsWinner,
+        isHuman
     }
 }

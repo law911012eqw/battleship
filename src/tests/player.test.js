@@ -1,4 +1,4 @@
-const Player = require('../scripts/player.js');
+import Player from '../scripts/player';
 
 //reusable functions
 const toggleTurnForBothPlayers = (p1, p2) => {
@@ -7,28 +7,26 @@ const toggleTurnForBothPlayers = (p1, p2) => {
 }
 
 test('Toggle players\' turn after an attack ', () => {
-    const Human = Player(true, true, null);
-    const AI = Player(false, false, 1);
+    const Human = Player(true, true, null, 10);
+    const AI = Player(false, false, 1, 10);
     toggleTurnForBothPlayers(Human, AI);
     toggleTurnForBothPlayers(Human, AI);
     expect(Human.turn).toEqual(true);
 })
 
 test('Alternate attack between parties until one loses the game', () => {
-    const AI = Player(true, false, 1);
-    const AI2 = Player(false, false, 1);
+    const AI = Player(true, false, 1, 10);
+    const AI2 = Player(false, false, 1, 10);
     while (AI.gameboard.getCurrentTotalShips() !== 0 || AI2.gameboard.getCurrentTotalShips() !== 0) {
         toggleTurnForBothPlayers(AI, AI2);
         //console.log(AI.gameboard.currentTotalShips, AI2.gameboard.currentTotalShips);
         if (AI.turn) {
             const atk = AI.aiMove(AI.aiLegalAtks);
             const ships = AI2.gameboard.shipsOnTheBoard;
-            //console.log(atk);
             AI2.gameboard.receiveAttack(atk[0], atk[1], ships);
         } else if (AI2.turn) {
             const atk = AI2.aiMove(AI2.aiLegalAtks);
             const ships = AI.gameboard.shipsOnTheBoard;
-            //console.log(atk);
             AI.gameboard.receiveAttack(atk[0], atk[1], ships);
         }
     }

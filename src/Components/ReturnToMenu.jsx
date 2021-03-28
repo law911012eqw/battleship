@@ -1,4 +1,4 @@
-import { useHistory, Link } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 
 export default function ReturnToMenu() {
     const history = useHistory();
@@ -8,9 +8,8 @@ export default function ReturnToMenu() {
     }
     return (
         <li id="Return" onClick={handleClick}>
-            <Link>
-                Return to Menu
-            </Link>
+            <i class="fas fa-arrow-circle-left"></i>
+            Return to Menu
         </li>
     )
 }

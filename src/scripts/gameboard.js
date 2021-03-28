@@ -1,8 +1,8 @@
 import Ship from './ship'
 
-export default function Gameboard(){
-    const height = 10; //immutable board height
-    const width = 10; //mutable board width
+export default function Gameboard(size){
+    const height = size; //immutable board height
+    const width = size; //mutable board width
     //default sets of ships
     const shipClasses = [
         ['Carrier', 5],
@@ -29,7 +29,7 @@ export default function Gameboard(){
 
     const board = twoDimensionalArrayGenerator(height, width); //A 2d array-ish for coodinations
     const randomNumGen = (len) => { //
-        const n = (10 - len);
+        const n = (size - len);
         return Math.floor(Math.random() * n) + 1;
     }
     let occupiedPos = []; //occupied coordinate positions -- tracks what is available or not
@@ -149,3 +149,4 @@ export default function Gameboard(){
         getCurrentTotalShips
     }
 }
+

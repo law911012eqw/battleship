@@ -1,4 +1,4 @@
-const Ship = require('../scripts/ship.js');
+import Ship from '../scripts/ship';
 
 test('ship damage after hit', () => {
     const current = Ship('Carrier', 5);
