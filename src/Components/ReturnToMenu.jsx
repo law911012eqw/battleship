@@ -8,7 +8,7 @@ export default function ReturnToMenu() {
     }
     return (
         <li id="Return" onClick={handleClick}>
-            <i class="fas fa-arrow-circle-left"></i>
+            <i className="fas fa-arrow-circle-left"></i>
             Return to Menu
         </li>
     )

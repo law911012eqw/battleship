@@ -17,8 +17,6 @@ export default function Battle(gamemode, max) {
     const cv1Ref = useRef(null);
     const cv2Ref = useRef(null);
 
-    console.log(Player1.aiLegalAtks);
-
     //draw tiles for the board
     const drawSquare = (x, y, ctx, sz) => {
         ctx.fillStyle = 'rgb(7,67,114)';
@@ -29,7 +27,7 @@ export default function Battle(gamemode, max) {
 
     //draw the game board
     const drawBoard = (ctx, sz, board) => {
-        const SQR = sz * ((100 / 15) * 0.01);
+        const SQR = sz * ((100 / 10) * 0.01);
         ctx.clearRect(width, width, width, width)
         board.forEach((row, r) => {
             row.forEach((col, c) => {
@@ -38,20 +36,22 @@ export default function Battle(gamemode, max) {
         })
     }
 
+    //draw ship placements specifically for AI
     //Functionality during the game
     const simulateBattleship = (ctx, sz, board) => {
-        const SQR = sz * ((100 / 15) * 0.01);
+        ctx.clearRect(sz, sz, sz, sz);
+        const SQR = sz * ((100 / 10) * 0.01);
         board.forEach((row, r) => {
             // seconds = r * 10;
             row.forEach((col, c) => {
                 if (col[1] === 1) {
-                    drawX(c, r, ctx, SQR, false);
-                    drawCircle(c, r, ctx, SQR);
+                    drawX(c + 1, r + 1, ctx, SQR, false);
+                    drawCircle(c + 1, r + 1, ctx, SQR);
                 }
             })
         })
     }
-
+    
     //Draw x on the board to indicate coordinate attack unavailability to the user
     const drawX = (x, y, ctx, sz, shipHit) => {
         ctx.beginPath();
@@ -123,6 +123,20 @@ export default function Battle(gamemode, max) {
 
     }
 
+    const displayTurnOrWinner = () => {
+        if (!winner) {
+            return (
+                <p className="display-turn">
+                    {P1.turn ? `${P1.displayName} turn` : `${P2.displayName} turn`}
+                </p>
+            )
+        }
+        return (
+            <p className="display-victory">
+                {P1.isWInner ? `${P1.displayName} wins!!` : `${P2.displayName} wins!!`}
+            </p>
+        )
+    }
     //Initial render of empty gameboard
     useEffect(() => {
         const cv1 = cv1Ref.current;
@@ -139,19 +153,16 @@ export default function Battle(gamemode, max) {
         const cv2 = cv2Ref.current;
         const ctx1 = cv1.getContext('2d');
         const ctx2 = cv2.getContext('2d');
-
         //start the round
         const startRound = () => {
-            if (winner !== true) {
-                autoBattle(P1, P2);
-                setTurnCounter(turnCount);
-                return P1.getIsWinner() === true || P2.getIsWinner() === true ? true : false;
-            }
+            console.log(winner);
+            autoBattle(P1, P2);
+            setTurnCounter(turnCount);
         }
-    
+
         //Delay attack
         async function attackDelay(ms) {
-            setTimeout(()=>{
+            setTimeout(() => {
                 checkCurrentPlayerTurn();
             }, ms)
             return;
@@ -159,20 +170,24 @@ export default function Battle(gamemode, max) {
 
         //check which player is the current turn
         async function checkCurrentPlayerTurn() {
-            await attackDelay(10000);
-            if (P1.turn) {
-                attack(ctx1, P1);
-            } else {
-                attack(ctx2, P2);
+            console.log(P1.turn, P2.turn);
+            if (P1.isWinner !== true || P2.isWinner !== true) {
+                await attackDelay(10000);
+                if (P1.turn) {
+                    console.log(P1.isWinner, P2.isWinner);
+                    simulateBattleship(ctx1, SIZE, P1.gameboard.board);
+                } else {
+                    console.log(P1.isWinner, P2.isWinner);
+                    simulateBattleship(ctx2, SIZE, P2.gameboard.board);
+                }
+                setWinner(startRound());
             }
-            setWinner(startRound());
+            return;
         }
 
-        //attack the opponent
-        function attack(ctx, p) {
-            simulateBattleship(ctx, SIZE, p.gameboard.board);
-        }
         checkCurrentPlayerTurn();
+        console.log(P1.isWinner, P2.isWinner);
+
         return (() => {
             clearTimeout(attackDelay);
         })
@@ -182,10 +197,9 @@ export default function Battle(gamemode, max) {
     return (
         <div id="Battle">
             <ReturnToMenu />
-            <h1>Battle</h1>
             <div id="main-battle">
                 {canvasContainer(cv1Ref, SIZE, "cv1", P1)}
-                <p>{P1.turn ? `${P1.displayName} turn` : `${P2.displayName} turn`} </p>
+                {displayTurnOrWinner()}
                 {canvasContainer(cv2Ref, SIZE, "cv2", P2)}
             </div>
         </div>

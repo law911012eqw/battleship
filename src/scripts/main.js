@@ -2,9 +2,12 @@ import Player from './player'; //arguments = (initialTurn,isHuman,difficulty -> 
 
 //Global variables 
 export let turnCount = 0;
+
+const MAX = 10;
+
 //Initial creation of player objects
-export const Player1 = Player(true, false, 1, 15);
-export const Player2 = Player(false, false, 1, 15);
+export const Player1 = Player(true, false, 1, MAX);
+export const Player2 = Player(false, false, 1, MAX);
 
 //toggle turns
 const toggleTurnForBothPlayers = (p1, p2) => {
@@ -43,8 +46,8 @@ export const autoBattle = (P1, P2) => {
         const ships = P1.gameboard.shipsOnTheBoard;
         P1.gameboard.receiveAttack(atk[0], atk[1], ships);
     }
-    toggleTurnForBothPlayers(P1, P2);
     checkWinner(P1,P2);
+    toggleTurnForBothPlayers(P1, P2);
 }
 
 namingBothParties(Player1, Player2);

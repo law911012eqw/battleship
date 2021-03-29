@@ -38,9 +38,6 @@ export default function Player(initialTurn, player, difficulty, size) {
         }
     }
     const togglePlayerTurn = (turn) => { return !turn; }
-    const getIsWinner = () => {
-        return isWinner;
-    }
     return {
         gameboard,
         turn,
@@ -48,7 +45,8 @@ export default function Player(initialTurn, player, difficulty, size) {
         aiMove,
         aiLegalAtks,
         selectedAtk,
-        getIsWinner,
-        isHuman
+        isWinner,
+        isHuman,
+        displayName
     }
 }
