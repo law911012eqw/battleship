@@ -122,11 +122,22 @@ export default function Gameboard(size){
                 if (pos.x === x && pos.y === y) {
                     ship.ship.hit();
                     checkShipState(ship);
+                    removeCurrentOccupiedPosIfHit(occupiedPos, x, y);
                     return false;
                 }
             }
         }
         return true;
+    }
+
+    const removeCurrentOccupiedPosIfHit = (arr, x, y) => {
+        arr.forEach((pos, i) => {
+            if (pos.x === x && pos.y === y) {
+                //remove occupied position using a specified coordinates chosen by user
+                const hit = arr.splice(i, 1);
+                return [].concat(...hit);
+            }
+        });
     }
 
     //get mutable variables

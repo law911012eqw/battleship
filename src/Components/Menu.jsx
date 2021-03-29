@@ -23,11 +23,11 @@ function NavigateSwitch(gamemode, setGamemode, max, setMax) {
     return (
         <Switch>
             <Route exact path="/battleship/" children={<Home />} />
-            <Route exact path="/battleship/battle" 
-            children={<Battle gamemode={gamemode} max={max}/>} />
+            <Route exact path="/battleship/battle"
+                children={<Battle gamemode={gamemode} max={max} />} />
             <Route exact path="/battleship/themes" children={<Themes />} />
-            <Route exact path="/battleship/settings" 
-                children={<Settings setGamemode={setGamemode} setMax={setMax}/>} />
+            <Route exact path="/battleship/settings"
+                children={<Settings setGamemode={setGamemode} setMax={setMax} />} />
         </Switch>
     )
 }
