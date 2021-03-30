@@ -5,7 +5,7 @@ export default function Themes(){
     return(
         <div id="Themes">
             <ReturnToMenu />
-            <h1>Select themes: </h1>
+            <h1 className="title">Select themes: </h1>
         </div>
     )
 }

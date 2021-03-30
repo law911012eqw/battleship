@@ -2,12 +2,25 @@ import Player from './player'; //arguments = (initialTurn,isHuman,difficulty -> 
 
 //Global variables 
 export let turnCount = 0;
-
 const MAX = 10;
 
 //Initial creation of player objects
-export const Player1 = Player(true, false, 1, MAX);
-export const Player2 = Player(false, false, 1, MAX);
+export let Player1 = null;
+export let Player2 = null;
+
+export const setGameType = (gamemode, difficulty) => {
+    if (gamemode == 0) {
+        Player1 = Player(true, true, null, MAX);
+        Player2 = Player(false, true, null, MAX);
+    } else if (gamemode == 1) {
+        Player1 = Player(true, true, null, MAX);
+        Player2 = Player(false, false, difficulty, MAX);
+    } else {
+        Player1 = Player(true, false, difficulty, MAX);
+        Player2 = Player(false, false, difficulty, MAX);
+    }
+    namingBothParties(Player1, Player2);
+}
 
 //toggle turns
 const toggleTurnForBothPlayers = (p1, p2) => {
@@ -17,10 +30,10 @@ const toggleTurnForBothPlayers = (p1, p2) => {
 
 //used to display to check if the player is an AI or not
 const namingBothParties = (Player1, Player2) => {
-    if(Player1.isHuman === true && Player2.isHuman === true){
+    if (Player1.isHuman === true && Player2.isHuman === true) {
         Player1.displayName = 'Player 1';
         Player2.displayName = 'Player 2';
-    } else if (Player1.isHuman === false && Player2.isHuman === false){
+    } else if (Player1.isHuman === false && Player2.isHuman === false) {
         Player1.displayName = 'AI 1';
         Player2.displayName = 'AI 2';
     } else {
@@ -46,8 +59,14 @@ export const autoBattle = (P1, P2) => {
         const ships = P1.gameboard.shipsOnTheBoard;
         P1.gameboard.receiveAttack(atk[0], atk[1], ships);
     }
-    checkWinner(P1,P2);
+    checkWinner(P1, P2);
     toggleTurnForBothPlayers(P1, P2);
 }
 
-namingBothParties(Player1, Player2);
+export const playerAttack = (p, x, y) => {
+    turnCount++;
+    const ships = p.gameboard.shipsOnTheBoard;
+    p.gameboard.receiveAttack(x, y, ships);
+    checkWinner(Player1, Player2);
+    toggleTurnForBothPlayers(Player1, Player2);
+}

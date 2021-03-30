@@ -1,9 +1,69 @@
-.App { text-align: center; }
-.title-wrapper{ 
-  text-align: left; 
-  font-size: 22px;
+.App{
+  height: 100vh;
+  width: 100%;
+  position: relative;
 }
-#title{ margin-left: 30px; }
+
+/* GLOBAL TAGS */
+.fas, p, li{ color: rgb(7,67,114); }
+li{ list-style-type: none; }
+label {color: aliceblue; }
+
+/* SELECT STYLING */
+.custom-select{
+  font-size: 14px;
+  margin: 0 12px;
+  position: relative;
+}
+.custom-select::before{
+  content: "\f13a";
+  transform: scale(0.7);
+  font-family: FontAwesome;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 50%;
+  height: 100%;
+  text-align: center;
+  font-size: 28px;
+  line-height: 45px;
+  color: rgba(255, 255, 255, 0.5);
+  pointer-events: none;
+}
+.custom-select select {
+  background-color: #2190eb;
+  color: aliceblue;
+  padding: 12px;
+  width: 100px;
+  border: none;
+  font-size: 0.7rem;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+  -webkit-appearance: button;
+  appearance: button;
+  outline: none;
+}
+.custom-select:hover::before {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.custom-select select option {
+  padding: 30px;
+}
+#Settings{
+  display: flex;
+  justify-content: center;
+}
+#Themes > h1{
+  margin-left: 30px;
+}
+.title-wrapper{
+  line-height: 0.1;
+  margin-bottom: 30px;
+}
+#title{ 
+  margin-left: 30px; 
+  font-size: 2.7rem;
+}
 .title, .divider, .author, .frame{
   display: inline-block;
   color: aliceblue;
@@ -24,21 +84,33 @@
   border-radius: 50%;
   cursor: crosshair;
 }
-
+#menu{
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
 #nav-menu{
   display: flex;
   flex-direction: column;
 }
-ul, li{
-  list-style-type: none;
-  width: 150px;
-  text-align: start;
+
+#nav-menu > ul, #nav-menu li, select  {
   cursor: pointer;
+}
+#nav-menu li { margin: 4px; }
+#nav-menu a{ color: rgb(212, 235, 250); }
+#nav-menu a:hover{
+  color: rgb(11, 79, 139);
+  cursor: crosshair;
 }
 .cv{
   cursor: crosshair;
   box-shadow: 2px 2px 8px 0 rgba(56, 56, 56, 0.699);
 }
+
+/*** Return to Menu SECTION ***/
 #Return{
   margin: 22px;
   color: rgb(7,67,114);
@@ -49,6 +121,7 @@ ul, li{
 #Return:hover{
   text-decoration: underline;
 }
+
 /*** Battle Section ***/
 #main-battle{
   display: flex;
@@ -61,8 +134,4 @@ ul, li{
 }
 .player-resource-container{
   margin: 0 25px;
-}
-
-.fas{
-  color: rgb(7,67,114);
 }

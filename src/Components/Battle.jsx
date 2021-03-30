@@ -1,14 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 import ReturnToMenu from './ReturnToMenu';
-import { Player1, Player2, autoBattle, turnCount } from '../scripts/main'
+import { Player1, Player2, autoBattle, turnCount, setGameType } from '../scripts/main'
 
-export default function Battle(gamemode, max) {
+export default function Battle({ gamemode, difficulty }) {
     const [width] = useState(window.innerWidth);
-
     //Player states
-    const [P1] = useState(Player1);
-    const [P2] = useState(Player2);
     const [turnCounter, setTurnCounter] = useState(turnCount);
     const [winner, setWinner] = useState(null);
 
@@ -17,6 +14,11 @@ export default function Battle(gamemode, max) {
     const cv1Ref = useRef(null);
     const cv2Ref = useRef(null);
 
+    const setPreparationBeforeGame = (gamemode, difficulty) => {
+        setGameType(parseInt(gamemode.value), parseInt(difficulty.value));
+        console.log(gamemode.value, difficulty.value);
+        console.log(Player1, Player2);
+    }
     //draw tiles for the board
     const drawSquare = (x, y, ctx, sz) => {
         ctx.fillStyle = 'rgb(7,67,114)';
@@ -51,7 +53,7 @@ export default function Battle(gamemode, max) {
             })
         })
     }
-    
+
     //Draw x on the board to indicate coordinate attack unavailability to the user
     const drawX = (x, y, ctx, sz, shipHit) => {
         ctx.beginPath();
@@ -88,7 +90,7 @@ export default function Battle(gamemode, max) {
 
         return (
             <div className="canvas-container">
-                {id === 'cv1' ? playerInfo(player) : null}
+                {id === 'cv1' && player !== null ? playerInfo(player) : null}
                 <canvas
                     ref={ref}
                     className="cv"
@@ -97,7 +99,7 @@ export default function Battle(gamemode, max) {
                     height={`${size}px`}
                 >
                 </canvas>
-                {id === 'cv2' ? playerInfo(player) : null}
+                {id === 'cv2' && player !== null ? playerInfo(player) : null}
             </div>
         )
     }
@@ -113,7 +115,7 @@ export default function Battle(gamemode, max) {
                     <p>{currentShips}/5</p>
                 </div>
                 <div className="player-resources">
-                    <i classname="fas fa-splotch"></i>
+                    <i className="fas fa-splotch"></i>
                     <p>{currentOccupied}/17</p>
                 </div>
             </div>
@@ -127,24 +129,28 @@ export default function Battle(gamemode, max) {
         if (!winner) {
             return (
                 <p className="display-turn">
-                    {P1.turn ? `${P1.displayName} turn` : `${P2.displayName} turn`}
+                    {Player1.turn ? `${Player1.displayName} turn` : `${Player2.displayName} turn`}
                 </p>
             )
         }
         return (
             <p className="display-victory">
-                {P1.isWInner ? `${P1.displayName} wins!!` : `${P2.displayName} wins!!`}
+                {Player1.isWinner ? `${Player1.displayName} wins!!` : `${Player2.displayName} wins!!`}
             </p>
         )
     }
+
+    useEffect(() => {
+        setPreparationBeforeGame(gamemode, difficulty);
+    }, [])
     //Initial render of empty gameboard
     useEffect(() => {
         const cv1 = cv1Ref.current;
         const cv2 = cv2Ref.current;
         const ctx1 = cv1.getContext('2d');
         const ctx2 = cv2.getContext('2d');
-        drawBoard(ctx1, SIZE, P1.gameboard.board);
-        drawBoard(ctx2, SIZE, P2.gameboard.board);
+        drawBoard(ctx1, SIZE, Player1.gameboard.board);
+        drawBoard(ctx2, SIZE, Player2.gameboard.board);
     }, [])
 
     //Main side-effects of present gameplay
@@ -156,7 +162,7 @@ export default function Battle(gamemode, max) {
         //start the round
         const startRound = () => {
             console.log(winner);
-            autoBattle(P1, P2);
+            autoBattle(Player1, Player2);
             setTurnCounter(turnCount);
         }
 
@@ -170,15 +176,14 @@ export default function Battle(gamemode, max) {
 
         //check which player is the current turn
         async function checkCurrentPlayerTurn() {
-            console.log(P1.turn, P2.turn);
-            if (P1.isWinner !== true || P2.isWinner !== true) {
+            if (Player1.isWinner !== true || Player2.isWinner !== true) {
                 await attackDelay(10000);
-                if (P1.turn) {
-                    console.log(P1.isWinner, P2.isWinner);
-                    simulateBattleship(ctx1, SIZE, P1.gameboard.board);
+                if (Player1.turn) {
+                    console.log(Player1.isWinner, Player2.isWinner);
+                    simulateBattleship(ctx1, SIZE, Player1.gameboard.board);
                 } else {
-                    console.log(P1.isWinner, P2.isWinner);
-                    simulateBattleship(ctx2, SIZE, P2.gameboard.board);
+                    console.log(Player1.isWinner, Player2.isWinner);
+                    simulateBattleship(ctx2, SIZE, Player2.gameboard.board);
                 }
                 setWinner(startRound());
             }
@@ -186,21 +191,20 @@ export default function Battle(gamemode, max) {
         }
 
         checkCurrentPlayerTurn();
-        console.log(P1.isWinner, P2.isWinner);
 
         return (() => {
             clearTimeout(attackDelay);
         })
 
-    }, [P1, P2])
+    }, [turnCounter])
 
     return (
         <div id="Battle">
             <ReturnToMenu />
             <div id="main-battle">
-                {canvasContainer(cv1Ref, SIZE, "cv1", P1)}
-                {displayTurnOrWinner()}
-                {canvasContainer(cv2Ref, SIZE, "cv2", P2)}
+                {canvasContainer(cv1Ref, SIZE, "cv1", Player1)}
+                {Player1 !== null || Player2 !== null ? displayTurnOrWinner() : null}
+                {canvasContainer(cv2Ref, SIZE, "cv2", Player2)}
             </div>
         </div>
     )

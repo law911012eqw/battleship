@@ -31,7 +31,7 @@ export default function Player(initialTurn, player, difficulty, size) {
     const aiLegalAtks = randomPlays(size);
 
     const aiMove = (moves) => {
-        if (AILEVEL === 1 && moves.length !== 0) {
+        if (AILEVEL == 1 && moves.length !== 0) {
             //takes and removes an element using a random index
             const move = moves.splice(randomNum(moves.length - 1), 1);
             return [].concat(...move);
