@@ -52,6 +52,7 @@ label {color: aliceblue; }
 #Settings{
   display: flex;
   justify-content: center;
+  margin-top: 20px;
 }
 #Themes > h1{
   margin-left: 30px;
@@ -93,9 +94,11 @@ label {color: aliceblue; }
 }
 #nav-menu{
   display: flex;
-  flex-direction: column;
+  justify-content: space-around;
 }
-
+#nav-menu ul{
+  margin-right: 30px;
+}
 #nav-menu > ul, #nav-menu li, select  {
   cursor: pointer;
 }

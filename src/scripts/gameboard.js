@@ -142,7 +142,6 @@ export default function Gameboard(size){
 
     //get mutable variables
     const getOccupiedPos = () => { return occupiedPos; }
-    const getBoard = () => { return board; }
     const getCurrentTotalShips = () => { return currentTotalShips; }
     return {
         height,
@@ -156,7 +155,6 @@ export default function Gameboard(size){
         receiveAttack,
         isShipGotHit,
         getOccupiedPos,
-        getBoard,
         getCurrentTotalShips
     }
 }

@@ -1,24 +1,23 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 import ReturnToMenu from './ReturnToMenu';
-import { Player1, Player2, autoBattle, turnCount, setGameType } from '../scripts/main'
+import { Player1, Player2, autoBattle, turnCount } from '../scripts/main'
 
 export default function Battle({ gamemode, difficulty }) {
     const [width] = useState(window.innerWidth);
     //Player states
     const [turnCounter, setTurnCounter] = useState(turnCount);
     const [winner, setWinner] = useState(null);
+    const [P1,] = useState(Player1);
+    const [P2,] = useState(Player2);
+    const instructions = ['Place the ships', 'Destroy the enemy\'s ships'];
+    // const [arePlayersSet, setArePlayersSet] = useState(false);
 
-    const SIZE = width * .30;
+    const SIZE = width * .26;
 
     const cv1Ref = useRef(null);
     const cv2Ref = useRef(null);
 
-    const setPreparationBeforeGame = (gamemode, difficulty) => {
-        setGameType(parseInt(gamemode.value), parseInt(difficulty.value));
-        console.log(gamemode.value, difficulty.value);
-        console.log(Player1, Player2);
-    }
     //draw tiles for the board
     const drawSquare = (x, y, ctx, sz) => {
         ctx.fillStyle = 'rgb(7,67,114)';
@@ -27,28 +26,72 @@ export default function Battle({ gamemode, difficulty }) {
         ctx.strokeRect(x * sz, y * sz, sz, sz);
     }
 
+    const drawShip = (x, y, ctx, sz, len, direction) => { 
+        ctx.fillStyle = 'rgb(224,224,224)';
+        ctx.strokeStyle = 'rgb(0,0,0)';
+        for(let i = 0; i < len; i++){ 
+            direction === 0 ? ctx.fillRect(x * sz, y * sz, sz, sz * len) : ctx.fillRect(x * sz, y * sz, sz * len, sz);
+        }
+        direction === 0 ? ctx.strokeRect(x * sz, y * sz, sz , sz * len) : ctx.strokeRect(x * sz, y * sz, sz * len,sz);
+    }
+
     //draw the game board
-    const drawBoard = (ctx, sz, board) => {
-        const SQR = sz * ((100 / 10) * 0.01);
-        ctx.clearRect(width, width, width, width)
+    const drawBoard = (ctx, sz, player) => {
+        const SQR = sz * ((100 / 10) * 0.01); //square size of each coordinates
+        const pos = player.gameboard.shipsOnTheBoard;
+        const occupiedPos = player.gameboard.getOccupiedPos();
+        const board = player.gameboard.board; 
         board.forEach((row, r) => {
             row.forEach((col, c) => {
-                drawSquare(c, r, ctx, SQR);
+                //Auto visualize ships in AI board
+                if (occupiedPos.filter(o => o.x === r && o.y === c).length !== 1){
+                    drawSquare(c, r, ctx, SQR);
+                } 
+                if (gamemode.value == 2 && pos.filter(o => o.pos[0].x === r && o.pos[0].y === c).length == 1) {
+                    for(const ship of pos){
+                        if(ship.pos[0].x === r && ship.pos[0].y === c){
+                            if(ship.pos[0].x === r && ship.pos[1].x === r){
+                                drawShip(c, r, ctx, SQR, ship.pos.length, 1)
+                            } else{
+                                drawShip(c, r, ctx, SQR, ship.pos.length, 0);
+                            }
+                        }
+                    }
+                } 
             })
         })
     }
 
+    //Feature availability: to track the current coordinates demanded with mouse event
+    // function getCursorPosition(canvas, event) {
+    //     const rect = canvas.getBoundingClientRect()
+    //     const x = event.clientX - rect.left
+    //     const y = event.clientY - rect.top
+    //     console.log("x: " + x + " y: " + y)
+    // }
+    
+    // const canvas = document.querySelector('canvas')
+    // canvas.addEventListener('mousedown', function(e) {
+    //     getCursorPosition(canvas, e)
+    // })
+
     //draw ship placements specifically for AI
-    //Functionality during the game
-    const simulateBattleship = (ctx, sz, board) => {
-        ctx.clearRect(sz, sz, sz, sz);
+    //Functionality during the game -> marks the attacked coordinates
+    const simulateBattleship = (ctx, sz, player) => {
         const SQR = sz * ((100 / 10) * 0.01);
+        const board = player.gameboard.board;
+        const pos = player.gameboard.getOccupiedPos();
         board.forEach((row, r) => {
-            // seconds = r * 10;
-            row.forEach((col, c) => {
+            row.forEach((col, c) => { //0 = unattacked, 1 = recency(by 1), 2 = already marked
                 if (col[1] === 1) {
-                    drawX(c + 1, r + 1, ctx, SQR, false);
-                    drawCircle(c + 1, r + 1, ctx, SQR);
+                    if(pos.filter(o => o.x === c && o.y === r).length == 1){
+                        drawX(c + 1, r + 1, ctx, SQR, true);
+                        drawCircle(c + 1, r + 1, ctx, SQR, true);
+                    } else{
+                        drawX(c + 1, r + 1, ctx, SQR, false);
+                        drawCircle(c + 1, r + 1, ctx, SQR, false);
+                    }
+                    col[1] = 2;
                 }
             })
         })
@@ -87,7 +130,6 @@ export default function Battle({ gamemode, difficulty }) {
 
     //Output of canvas element
     const canvasContainer = (ref, size, id, player) => {
-
         return (
             <div className="canvas-container">
                 {id === 'cv1' && player !== null ? playerInfo(player) : null}
@@ -129,28 +171,25 @@ export default function Battle({ gamemode, difficulty }) {
         if (!winner) {
             return (
                 <p className="display-turn">
-                    {Player1.turn ? `${Player1.displayName} turn` : `${Player2.displayName} turn`}
+                    {P1.turn ? `${P1.displayName} turn` : `${P2.displayName} turn`}
                 </p>
             )
         }
         return (
             <p className="display-victory">
-                {Player1.isWinner ? `${Player1.displayName} wins!!` : `${Player2.displayName} wins!!`}
+                {P1.isWinner ? `${P1.displayName} wins!!` : `${P2.displayName} wins!!`}
             </p>
         )
     }
 
-    useEffect(() => {
-        setPreparationBeforeGame(gamemode, difficulty);
-    }, [])
     //Initial render of empty gameboard
     useEffect(() => {
         const cv1 = cv1Ref.current;
         const cv2 = cv2Ref.current;
         const ctx1 = cv1.getContext('2d');
         const ctx2 = cv2.getContext('2d');
-        drawBoard(ctx1, SIZE, Player1.gameboard.board);
-        drawBoard(ctx2, SIZE, Player2.gameboard.board);
+        drawBoard(ctx1, SIZE, P1);
+        drawBoard(ctx2, SIZE, P2);
     }, [])
 
     //Main side-effects of present gameplay
@@ -161,8 +200,7 @@ export default function Battle({ gamemode, difficulty }) {
         const ctx2 = cv2.getContext('2d');
         //start the round
         const startRound = () => {
-            console.log(winner);
-            autoBattle(Player1, Player2);
+            autoBattle(P1, P2);
             setTurnCounter(turnCount);
         }
 
@@ -176,18 +214,18 @@ export default function Battle({ gamemode, difficulty }) {
 
         //check which player is the current turn
         async function checkCurrentPlayerTurn() {
-            if (Player1.isWinner !== true || Player2.isWinner !== true) {
-                await attackDelay(10000);
-                if (Player1.turn) {
-                    console.log(Player1.isWinner, Player2.isWinner);
-                    simulateBattleship(ctx1, SIZE, Player1.gameboard.board);
+            if (P1.isWinner !== true || P2.isWinner !== true) {
+                await attackDelay(500);
+                if (P1.turn) {
+                    simulateBattleship(ctx2, SIZE, P2);
                 } else {
-                    console.log(Player1.isWinner, Player2.isWinner);
-                    simulateBattleship(ctx2, SIZE, Player2.gameboard.board);
+                    simulateBattleship(ctx1, SIZE, P1);
                 }
                 setWinner(startRound());
             }
-            return;
+            else {
+                return;
+            }
         }
 
         checkCurrentPlayerTurn();
@@ -196,15 +234,15 @@ export default function Battle({ gamemode, difficulty }) {
             clearTimeout(attackDelay);
         })
 
-    }, [turnCounter])
+    }, [P1, P2])
 
     return (
         <div id="Battle">
             <ReturnToMenu />
             <div id="main-battle">
-                {canvasContainer(cv1Ref, SIZE, "cv1", Player1)}
-                {Player1 !== null || Player2 !== null ? displayTurnOrWinner() : null}
-                {canvasContainer(cv2Ref, SIZE, "cv2", Player2)}
+                {canvasContainer(cv1Ref, SIZE, "cv1", P1)}
+                {P1 !== null || P2 !== null ? displayTurnOrWinner() : null}
+                {canvasContainer(cv2Ref, SIZE, "cv2", P2)}
             </div>
         </div>
     )

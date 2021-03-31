@@ -4,6 +4,8 @@ import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
 import Battle from './Battle';
 import Themes from './Themes';
 import Settings from './Settings';
+import { setGameType } from '../scripts/main';
+
 export default function Menu() {
     const [gamemode, setGamemode] = useState({ value: '0' }); //0 = both AI, 1 = Player vs AI, 2 = PvP
     const [difficulty, setDifficulty] = useState({ value: '1' });
@@ -57,11 +59,18 @@ function Home({ setGamemode, gamemode, difficulty, setDifficulty }) {
             window.location.href = 'https://github.com/law911012eqw';
         }
     })
+    useEffect(()=>{
+        const setPreparationBeforeGame = (gamemode, difficulty) => {
+            setGameType(parseInt(gamemode.value), parseInt(difficulty.value));
+            // setArePlayersSet(true);
+        }
+        setPreparationBeforeGame(gamemode, difficulty);
+    }, [gamemode, difficulty])
     return (
         <div id="menu">
             <div className="title-wrapper">
                 <h1 id="title" className="title">Battleship</h1>
-                <div>
+                <div className="author-wrapper">
                     <h2 className="divider"> | </h2>
                     <h5 className="author">Created by B.B Ant</h5>
                     <div className="frame">
