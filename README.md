@@ -1,9 +1,21 @@
 # Battleship
-A recreation of the an old classic game called [Battleship](https://en.wikipedia.org/wiki/Battleship_(game)).
+It's a recreation of the old classic game called [Battleship](https://en.wikipedia.org/wiki/Battleship_(game)) as a simple webpage game.
 
-# Getting Started with Create React App
+### Rules
+Place your ships and destroy the enemy ships. As simple as that. 
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### Ships
+These are the following ships exactly as the classes of ships from the old game.
+| Classes | Size |
+| ------- | -----|
+| Carrier | 5    |
+| Battleship | 4 |
+| Cruiser | 3 |
+| Submarine | 3 |
+| Destroyer | 2 |
+
+### Gamemodes 
+There are two gamemodes: Player vs Player (PvP) and Player vs AI with an implementation of two different difficulties. Additionally, a gameode AI vs AI is included specifically for debugging purposes or just to have fun with coding.
 
 ## Available Scripts
 
@@ -21,6 +33,10 @@ You will also see any lint errors in the console.
 
 Launches the test runner in the interactive watch mode.\
 See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+
+### `npm run unitest`
+
+It's a set of custom written tests bulding the fundamental foundation of the game's ruleset and to ensure the proper correctness of the coding base using jest as the main framework for testing. 
 
 ### `npm run build`
 
@@ -42,32 +58,3 @@ Instead, it will copy all the configuration files and the transitive dependencie
 
 You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
