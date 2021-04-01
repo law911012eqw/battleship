@@ -8,6 +8,7 @@ const MAX = 10;
 export let Player1 = null;
 export let Player2 = null;
 
+//Set the gamemode including the AI difficulty
 export const setGameType = (gamemode, difficulty) => {
     if (gamemode == 0) {
         Player1 = Player(true, true, null, MAX);
@@ -41,6 +42,7 @@ const namingBothParties = (Player1, Player2) => {
         Player2.displayName = 'AI';
     }
 }
+
 const checkWinner = (P1, P2) => {
     if (P1.gameboard.getOccupiedPos().length == 0) {
         P2.isWinner = true;
@@ -48,6 +50,8 @@ const checkWinner = (P1, P2) => {
         P1.isWinner = true;
     }
 }
+
+//Auto function for AIvsAI gamemode
 export const autoBattle = (P1, P2) => {
     turnCount++;
     if (P1.turn) {
@@ -63,10 +67,15 @@ export const autoBattle = (P1, P2) => {
     toggleTurnForBothPlayers(P1, P2);
 }
 
+//Attack the ships of the other party
 export const playerAttack = (p, x, y) => {
     turnCount++;
     const ships = p.gameboard.shipsOnTheBoard;
     p.gameboard.receiveAttack(x, y, ships);
     checkWinner(Player1, Player2);
     toggleTurnForBothPlayers(Player1, Player2);
+}
+
+export const randomize = (player) => {
+    player.gameboard.shipsOnTheBoard = player.gameboard.addShipsToTheBoard();
 }

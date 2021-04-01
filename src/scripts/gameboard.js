@@ -11,6 +11,7 @@ export default function Gameboard(size){
         ['Submariner', 3],
         ['Destroyer', 2]
     ]
+    let recentCoordinateAttackedShip = {x: -15, y: -15};
     const twoDimensionalArrayGenerator = (outerLen, innerLen) => {
         let arr = [];
         for (let i = 0; i < outerLen; i++) {
@@ -46,7 +47,7 @@ export default function Gameboard(size){
         const x = randomNumGen(len); //results to an integer between 0 and (h/w - length of ship)
         const y = Math.floor(Math.random() * bh); //output would be integer between 0 and 9
         const n1 = Math.round(Math.random()); //between 0 and 1
-        const n2 = betweenTwoNumbers(n1); //return 0 or 1 dependent to the output of n1
+        const n2 = betweenTwoNumbers(n1); //return 0 or 1 opposed to the output of n1
         for (let i = 0; i < len; i++) {
             const xy = [x + i, y];
             arr.push(new coordinate(xy[n1], xy[n2]));
@@ -61,11 +62,11 @@ export default function Gameboard(size){
     }
 
     //add the ships and its coordinates to the ship holder
-    const addShipsToTheBoard = (ships) => {
+    const addShipsToTheBoard = () => {
         const obj = [];
-        for (let i = 0; i < ships.length; i++) {
-            const name = ships[i][0];
-            const length = ships[i][1];
+        for (let i = 0; i < shipClasses.length; i++) {
+            const name = shipClasses[i][0];
+            const length = shipClasses[i][1];
             const pos = assignCoordinates(length, height);
             occupiedPos.push(...pos);
             const ship = Ship(name, length);
@@ -84,7 +85,7 @@ export default function Gameboard(size){
     }
 
     //An array to keep the ship factories and its board positions
-    const shipsOnTheBoard = addShipsToTheBoard(shipClasses);
+    const shipsOnTheBoard = addShipsToTheBoard();
     let currentTotalShips = shipsOnTheBoard.length;
 
     //check if all ships are gone or not
@@ -135,6 +136,7 @@ export default function Gameboard(size){
             if (pos.x === x && pos.y === y) {
                 //remove occupied position using a specified coordinates chosen by user
                 const hit = arr.splice(i, 1);
+                recentCoordinateAttackedShip = hit[0];
                 return [].concat(...hit);
             }
         });
@@ -143,17 +145,20 @@ export default function Gameboard(size){
     //get mutable variables
     const getOccupiedPos = () => { return occupiedPos; }
     const getCurrentTotalShips = () => { return currentTotalShips; }
+    const getRecentCoordinate = () => { return recentCoordinateAttackedShip; }
     return {
         height,
         width,
         randomNumGen,
         shipsOnTheBoard,
+        addShipsToTheBoard,
         board,
         missedAtks,
         currentTotalShips,
         validateCoordinates,
         receiveAttack,
         isShipGotHit,
+        getRecentCoordinate,
         getOccupiedPos,
         getCurrentTotalShips
     }

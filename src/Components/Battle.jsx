@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 import ReturnToMenu from './ReturnToMenu';
-import { Player1, Player2, autoBattle, turnCount } from '../scripts/main'
+import { Player1, Player2, autoBattle, turnCount, randomize } from '../scripts/main'
 
 export default function Battle({ gamemode, difficulty }) {
     const [width] = useState(window.innerWidth);
@@ -10,14 +10,25 @@ export default function Battle({ gamemode, difficulty }) {
     const [winner, setWinner] = useState(null);
     const [P1,] = useState(Player1);
     const [P2,] = useState(Player2);
-    const instructions = ['Place the ships', 'Destroy the enemy\'s ships'];
-    // const [arePlayersSet, setArePlayersSet] = useState(false);
+
+    //Possible nstructions for the player or both parties.
+    const instructions = ['Place the ships', 'Destroy the enemy\'s ships', 'Just watch.'];
+    const [start, setStart] = useState(false);
 
     const SIZE = width * .26;
 
     const cv1Ref = useRef(null);
     const cv2Ref = useRef(null);
 
+    const handleStartButton = () => {
+        if (!start) {
+            setStart(true);
+        }
+    }
+
+    const randomizeShipLocation = (player) => {
+        randomize(player);
+    }
     //draw tiles for the board
     const drawSquare = (x, y, ctx, sz) => {
         ctx.fillStyle = 'rgb(7,67,114)';
@@ -26,13 +37,13 @@ export default function Battle({ gamemode, difficulty }) {
         ctx.strokeRect(x * sz, y * sz, sz, sz);
     }
 
-    const drawShip = (x, y, ctx, sz, len, direction) => { 
+    const drawShip = (x, y, ctx, sz, len, direction) => {
         ctx.fillStyle = 'rgb(224,224,224)';
         ctx.strokeStyle = 'rgb(0,0,0)';
-        for(let i = 0; i < len; i++){ 
+        for (let i = 0; i < len; i++) {
             direction === 0 ? ctx.fillRect(x * sz, y * sz, sz, sz * len) : ctx.fillRect(x * sz, y * sz, sz * len, sz);
         }
-        direction === 0 ? ctx.strokeRect(x * sz, y * sz, sz , sz * len) : ctx.strokeRect(x * sz, y * sz, sz * len,sz);
+        direction === 0 ? ctx.strokeRect(x * sz, y * sz, sz, sz * len) : ctx.strokeRect(x * sz, y * sz, sz * len, sz);
     }
 
     //draw the game board
@@ -40,26 +51,30 @@ export default function Battle({ gamemode, difficulty }) {
         const SQR = sz * ((100 / 10) * 0.01); //square size of each coordinates
         const pos = player.gameboard.shipsOnTheBoard;
         const occupiedPos = player.gameboard.getOccupiedPos();
-        const board = player.gameboard.board; 
+        const board = player.gameboard.board;
         board.forEach((row, r) => {
             row.forEach((col, c) => {
                 //Auto visualize ships in AI board
-                if (occupiedPos.filter(o => o.x === r && o.y === c).length !== 1){
+                if (occupiedPos.filter(o => o.x === r && o.y === c).length !== 1) {
                     drawSquare(c, r, ctx, SQR);
-                } 
-                if (gamemode.value == 2 && pos.filter(o => o.pos[0].x === r && o.pos[0].y === c).length == 1) {
-                    for(const ship of pos){
-                        if(ship.pos[0].x === r && ship.pos[0].y === c){
-                            if(ship.pos[0].x === r && ship.pos[1].x === r){
-                                drawShip(c, r, ctx, SQR, ship.pos.length, 1)
-                            } else{
-                                drawShip(c, r, ctx, SQR, ship.pos.length, 0);
-                            }
-                        }
-                    }
-                } 
+                }
+                visualizeBoardForAIvsAI(pos, c, r, ctx, SQR);
             })
         })
+    }
+
+    const visualizeBoardForAIvsAI = (pos, c, r, ctx, SQR) => {
+        if (gamemode.value == 2 && pos.filter(o => o.pos[0].x === r && o.pos[0].y === c).length == 1) {
+            for (const ship of pos) {
+                if (ship.pos[0].x === r && ship.pos[0].y === c) {
+                    if (ship.pos[0].x === r && ship.pos[1].x === r) {
+                        drawShip(c, r, ctx, SQR, ship.pos.length, 1)
+                    } else {
+                        drawShip(c, r, ctx, SQR, ship.pos.length, 0);
+                    }
+                }
+            }
+        }
     }
 
     //Feature availability: to track the current coordinates demanded with mouse event
@@ -69,7 +84,7 @@ export default function Battle({ gamemode, difficulty }) {
     //     const y = event.clientY - rect.top
     //     console.log("x: " + x + " y: " + y)
     // }
-    
+
     // const canvas = document.querySelector('canvas')
     // canvas.addEventListener('mousedown', function(e) {
     //     getCursorPosition(canvas, e)
@@ -80,14 +95,16 @@ export default function Battle({ gamemode, difficulty }) {
     const simulateBattleship = (ctx, sz, player) => {
         const SQR = sz * ((100 / 10) * 0.01);
         const board = player.gameboard.board;
-        const pos = player.gameboard.getOccupiedPos();
+        //const occupiedPos = player.gameboard.getOccupiedPos();
+        const recentAttackedPos = player.gameboard.getRecentCoordinate();
+        console.log(recentAttackedPos);
         board.forEach((row, r) => {
             row.forEach((col, c) => { //0 = unattacked, 1 = recency(by 1), 2 = already marked
                 if (col[1] === 1) {
-                    if(pos.filter(o => o.x === c && o.y === r).length == 1){
+                    if (recentAttackedPos.x === r && recentAttackedPos.y === c) {
                         drawX(c + 1, r + 1, ctx, SQR, true);
                         drawCircle(c + 1, r + 1, ctx, SQR, true);
-                    } else{
+                    } else {
                         drawX(c + 1, r + 1, ctx, SQR, false);
                         drawCircle(c + 1, r + 1, ctx, SQR, false);
                     }
@@ -152,6 +169,7 @@ export default function Battle({ gamemode, difficulty }) {
         const currentOccupied = player.gameboard.getOccupiedPos().length;
         return (
             <div className="player-resource-container">
+                <p>{player.displayName}</p>
                 <div className="player-resources">
                     <i className="fas fa-ship"></i>
                     <p>{currentShips}/5</p>
@@ -167,6 +185,7 @@ export default function Battle({ gamemode, difficulty }) {
 
     }
 
+    //Displays turn or final outcome for the user to see
     const displayTurnOrWinner = () => {
         if (!winner) {
             return (
@@ -218,7 +237,7 @@ export default function Battle({ gamemode, difficulty }) {
                 await attackDelay(500);
                 if (P1.turn) {
                     simulateBattleship(ctx2, SIZE, P2);
-                } else {
+                } else if (P2.turn) {
                     simulateBattleship(ctx1, SIZE, P1);
                 }
                 setWinner(startRound());
@@ -228,13 +247,19 @@ export default function Battle({ gamemode, difficulty }) {
             }
         }
 
-        checkCurrentPlayerTurn();
+        const startGame = () => {
+            if (start) {
+                checkCurrentPlayerTurn();
+            }
+        }
+        console.log(start);
+        startGame();
 
         return (() => {
             clearTimeout(attackDelay);
         })
 
-    }, [P1, P2])
+    }, [start])
 
     return (
         <div id="Battle">
@@ -243,6 +268,22 @@ export default function Battle({ gamemode, difficulty }) {
                 {canvasContainer(cv1Ref, SIZE, "cv1", P1)}
                 {P1 !== null || P2 !== null ? displayTurnOrWinner() : null}
                 {canvasContainer(cv2Ref, SIZE, "cv2", P2)}
+            </div>
+            <div className="button-container">
+                <div id="p1-bottom-side">
+                    <button
+                        className="in-game-btn"
+                        onClick={randomizeShipLocation(P1)}
+                    >
+                        Randomize
+                        </button>
+                    <button
+                        className="in-game-btn"
+                        onClick={handleStartButton}
+                    >
+                        Start Game
+                        </button>
+                </div>
             </div>
         </div>
     )

@@ -1,5 +1,5 @@
 # Battleship
-A recreation of the an old classic game called [Battlefield](https://en.wikipedia.org/wiki/Battleship_(game)).
+A recreation of the an old classic game called [Battleship](https://en.wikipedia.org/wiki/Battleship_(game)).
 
 # Getting Started with Create React App
 
