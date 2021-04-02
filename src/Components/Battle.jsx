@@ -5,6 +5,7 @@ import { Player1, Player2, autoBattle, turnCount, randomize } from '../scripts/m
 
 export default function Battle({ gamemode, difficulty }) {
     const [width] = useState(window.innerWidth);
+
     //Player states
     const [turnCounter, setTurnCounter] = useState(turnCount);
     const [winner, setWinner] = useState(null);
@@ -12,11 +13,13 @@ export default function Battle({ gamemode, difficulty }) {
     const [P2,] = useState(Player2);
 
     //Possible nstructions for the player or both parties.
-    const instructions = ['Place the ships', 'Destroy the enemy\'s ships', 'Just watch.'];
+    const instructions = ['Place the ships', 'Start the game', 'Destroy the enemy\'s ships', 'Just watch'];
     const [start, setStart] = useState(false);
 
+    //Immutable variable
     const SIZE = width * .26;
 
+    //Canvas
     const cv1Ref = useRef(null);
     const cv2Ref = useRef(null);
 
@@ -26,8 +29,19 @@ export default function Battle({ gamemode, difficulty }) {
         }
     }
 
-    const randomizeShipLocation = (player) => {
-        randomize(player);
+    const randomizeShipLocation = (e) => {
+        const cv1 = cv1Ref.current;
+        const cv2 = cv2Ref.current;
+        const ctx1 = cv1.getContext('2d');
+        const ctx2 = cv2.getContext('2d');
+        console.log(e.target.id);
+        if (e.target.id === 'randomize-p1') {
+            randomize(P1);
+            drawBoard(ctx1, SIZE, P1);
+        } else {
+            randomize(P2);
+            drawBoard(ctx2, SIZE, P2);
+        }
     }
     //draw tiles for the board
     const drawSquare = (x, y, ctx, sz) => {
@@ -52,6 +66,7 @@ export default function Battle({ gamemode, difficulty }) {
         const pos = player.gameboard.shipsOnTheBoard;
         const occupiedPos = player.gameboard.getOccupiedPos();
         const board = player.gameboard.board;
+
         board.forEach((row, r) => {
             row.forEach((col, c) => {
                 //Auto visualize ships in AI board
@@ -148,16 +163,20 @@ export default function Battle({ gamemode, difficulty }) {
     //Output of canvas element
     const canvasContainer = (ref, size, id, player) => {
         return (
-            <div className="canvas-container">
+            <div className="base-container">
                 {id === 'cv1' && player !== null ? playerInfo(player) : null}
-                <canvas
-                    ref={ref}
-                    className="cv"
-                    id={id}
-                    width={`${size}px`}
-                    height={`${size}px`}
-                >
-                </canvas>
+                <div className="canvas-container">
+                    <canvas
+                        ref={ref}
+                        className="cv"
+                        id={id}
+                        width={`${size}px`}
+                        height={`${size}px`}
+                    >
+
+                    </canvas>
+                    {!start ? displayBeforeStartButtons(id) : null}
+                </div>
                 {id === 'cv2' && player !== null ? playerInfo(player) : null}
             </div>
         )
@@ -201,10 +220,33 @@ export default function Battle({ gamemode, difficulty }) {
         )
     }
 
+    const displayBeforeStartButtons = (id) => {
+        return (
+            <div className="button-container">
+                <div id="p1-bottom-side">
+                    <button
+                        className="in-game-btn"
+                        id={id === 'cv1' ? 'randomize-p1' : 'randomize-p2'}
+                        onClick={randomizeShipLocation}
+                    >
+                        Randomize
+                    </button>
+                    <button
+                        className="in-game-btn"
+                        onClick={handleStartButton}
+                    >
+                        Start Game
+                    </button>
+                </div>
+            </div>
+        )
+    }
+
     //Initial render of empty gameboard
     useEffect(() => {
         const cv1 = cv1Ref.current;
         const cv2 = cv2Ref.current;
+        console.log(cv1, cv2);
         const ctx1 = cv1.getContext('2d');
         const ctx2 = cv2.getContext('2d');
         drawBoard(ctx1, SIZE, P1);
@@ -268,22 +310,6 @@ export default function Battle({ gamemode, difficulty }) {
                 {canvasContainer(cv1Ref, SIZE, "cv1", P1)}
                 {P1 !== null || P2 !== null ? displayTurnOrWinner() : null}
                 {canvasContainer(cv2Ref, SIZE, "cv2", P2)}
-            </div>
-            <div className="button-container">
-                <div id="p1-bottom-side">
-                    <button
-                        className="in-game-btn"
-                        onClick={randomizeShipLocation(P1)}
-                    >
-                        Randomize
-                        </button>
-                    <button
-                        className="in-game-btn"
-                        onClick={handleStartButton}
-                    >
-                        Start Game
-                        </button>
-                </div>
             </div>
         </div>
     )

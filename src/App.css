@@ -131,7 +131,7 @@ label {color: aliceblue; }
   flex-direction: row;
   justify-content: space-around;
 }
-.canvas-container{
+.base-container{
   display: flex;
   flex-direction: row;
 }

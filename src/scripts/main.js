@@ -77,5 +77,8 @@ export const playerAttack = (p, x, y) => {
 }
 
 export const randomize = (player) => {
-    player.gameboard.shipsOnTheBoard = player.gameboard.addShipsToTheBoard();
+    const p = player.gameboard;
+    p.resetArray(p.occupiedPos);
+    p.shipsOnTheBoard = p.addShipsToTheBoard();
+    console.log(p.shipsOnTheBoard);
 }

@@ -29,11 +29,16 @@ export default function Gameboard(size){
     const betweenTwoNumbers = (x) => { return x > 0.5 ? 0 : 1; }
 
     const board = twoDimensionalArrayGenerator(height, width); //A 2d array-ish for coodinations
+    const resetArray = (arr) => {
+        while (arr.length > 0) {
+            arr.pop();
+        }
+    } 
     const randomNumGen = (len) => { //
         const n = (size - len);
         return Math.floor(Math.random() * n) + 1;
     }
-    let occupiedPos = []; //occupied coordinate positions -- tracks what is available or not
+    const occupiedPos = []; //occupied coordinate positions -- tracks what is available or not
     function coordinate(x, y) {
         this.x = x;
         this.y = y;
@@ -153,11 +158,13 @@ export default function Gameboard(size){
         shipsOnTheBoard,
         addShipsToTheBoard,
         board,
+        resetArray,
         missedAtks,
         currentTotalShips,
         validateCoordinates,
         receiveAttack,
         isShipGotHit,
+        occupiedPos,
         getRecentCoordinate,
         getOccupiedPos,
         getCurrentTotalShips
