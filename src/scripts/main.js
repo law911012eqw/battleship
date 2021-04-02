@@ -9,16 +9,16 @@ export let Player1 = null;
 export let Player2 = null;
 
 //Set the gamemode including the AI difficulty
-export const setGameType = (gamemode, difficulty) => {
+export const setGameType = (gamemode, p1diff, p2diff) => {
     if (gamemode == 0) {
         Player1 = Player(true, true, null, MAX);
         Player2 = Player(false, true, null, MAX);
     } else if (gamemode == 1) {
         Player1 = Player(true, true, null, MAX);
-        Player2 = Player(false, false, difficulty, MAX);
+        Player2 = Player(false, false, p2diff, MAX);
     } else {
-        Player1 = Player(true, false, difficulty, MAX);
-        Player2 = Player(false, false, difficulty, MAX);
+        Player1 = Player(true, false, p1diff, MAX);
+        Player2 = Player(false, false, p2diff, MAX);
     }
     namingBothParties(Player1, Player2);
 }
@@ -80,5 +80,4 @@ export const randomize = (player) => {
     const p = player.gameboard;
     p.resetArray(p.occupiedPos);
     p.shipsOnTheBoard = p.addShipsToTheBoard();
-    console.log(p.shipsOnTheBoard);
 }

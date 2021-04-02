@@ -78,8 +78,8 @@ export default function Battle({ gamemode, difficulty }) {
         })
     }
 
-    const visualizeBoardForAIvsAI = (pos, c, r, ctx, SQR) => {
-        if (gamemode.value == 2 && pos.filter(o => o.pos[0].x === r && o.pos[0].y === c).length == 1) {
+    const visualizeBoardForAIvsAI = (player, pos, c, r, ctx, SQR) => {
+        if (player.isHuman == false && pos.filter(o => o.pos[0].x === r && o.pos[0].y === c).length == 1) {
             for (const ship of pos) {
                 if (ship.pos[0].x === r && ship.pos[0].y === c) {
                     if (ship.pos[0].x === r && ship.pos[1].x === r) {

@@ -1,12 +1,16 @@
 import React from 'react';
 
-import ReturnToMenu from './ReturnToMenu';
 export default function Settings({ setGamemode, gamemode, difficulty, setDifficulty }) {
     const handleGamemodeChange = (event) => {
         setGamemode({ value: event.target.value });
     }
     const handleDifficultyChange = (event) => {
-        setDifficulty({ value: event.target.value })
+        console.log(difficulty);
+        if (event.target.id.includes(2) || gamemode.value == 1) {
+            setDifficulty({...difficulty, value: event.target.value, valB: event.target.value});
+        } else {
+            setDifficulty({...difficulty, value: event.target.value, valA: event.target.value });
+        }
     }
     return (
         <div id="Settings">
@@ -18,22 +22,34 @@ export default function Settings({ setGamemode, gamemode, difficulty, setDifficu
                 </select>
             </div>
 
+            {/* Difficulty option for AI as Player1 or AI as both parties */}
+            {gamemode.value == 2 ?
+                <ShowSelectDifficulty
+                    gamemode={gamemode}
+                    difficulty={difficulty}
+                    id={1}
+                    handleDifficultyChange={handleDifficultyChange}
+                /> : null}
             {gamemode.value != 0 ?
                 <ShowSelectDifficulty
+                    gamemode={gamemode}
                     difficulty={difficulty}
+                    id={2}
                     handleDifficultyChange={handleDifficultyChange}
                 /> : null}
         </div>
     )
 }
 
-const ShowSelectDifficulty = ({ difficulty, handleDifficultyChange }) => {
+const ShowSelectDifficulty = ({ gamemode, difficulty, id, handleDifficultyChange }) => {
     return (
-        <div className="custom-select">
+        <div className="custom-select" id={`ai-diff${id}`}>
             <select name="diff" value={difficulty.value} onChange={handleDifficultyChange}>
-                <option value='1'>Easy</option>
-                <option value='2'>Hard</option>
+                <option value='1'>{gamemode.value == 1 || id == 1 ? 'AI: Easy' : 'AI 2: Easy'}</option>
+                <option value='2'>{gamemode.value == 1 || id == 1 ? 'AI: Hard' : 'AI 2: Hard'}</option>
             </select>
         </div>
     )
+
+
 }

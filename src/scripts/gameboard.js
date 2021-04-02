@@ -43,8 +43,9 @@ export default function Gameboard(size){
         this.x = x;
         this.y = y;
     }
-    const missedAtks = [];
 
+    const missedAtks = [];
+    let recentAtk = null;
     //assign coordinates to a ship
     const assignCoordinates = (len, bh) => {
         let arr = [];
@@ -126,9 +127,10 @@ export default function Gameboard(size){
         for (const ship of ships) {
             for (const pos of ship.pos) {
                 if (pos.x === x && pos.y === y) {
-                    ship.ship.hit();
-                    checkShipState(ship);
-                    removeCurrentOccupiedPosIfHit(occupiedPos, x, y);
+                    ship.ship.hit(); //degrade the quality of the ship by decrementing it's health
+                    checkShipState(ship); //check it's state whether it's still floating or sunk
+                    recentAtk = {x: x, y: y}
+                    removeCurrentOccupiedPosIfHit(occupiedPos, x, y); //remove from current occupied positions
                     return false;
                 }
             }
@@ -160,6 +162,7 @@ export default function Gameboard(size){
         board,
         resetArray,
         missedAtks,
+        recentAtk,
         currentTotalShips,
         validateCoordinates,
         receiveAttack,

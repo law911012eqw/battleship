@@ -8,7 +8,7 @@ import { setGameType } from '../scripts/main';
 
 export default function Menu() {
     const [gamemode, setGamemode] = useState({ value: '0' }); //0 = both AI, 1 = Player vs AI, 2 = PvP
-    const [difficulty, setDifficulty] = useState({ value: '1' });
+    const [difficulty, setDifficulty] = useState({ value: '1', valA: '', valB: '' });
     const [mark, setMark] = useState(null);
     const [piece, setPiece] = useState(null);
     return (
@@ -32,9 +32,7 @@ function NavigateSwitch({
     setGamemode,
     difficulty,
     setDifficulty,
-    mark,
     setMark,
-    piece,
     setPiece }) {
     return (
         <Switch>
@@ -59,9 +57,9 @@ function Home({ setGamemode, gamemode, difficulty, setDifficulty }) {
             window.location.href = 'https://github.com/law911012eqw';
         }
     })
-    useEffect(()=>{
+    useEffect(() => {
         const setPreparationBeforeGame = (gamemode, difficulty) => {
-            setGameType(parseInt(gamemode.value), parseInt(difficulty.value));
+            setGameType(parseInt(gamemode.value), parseInt(difficulty.valA), parseInt(difficulty.valB));
             // setArePlayersSet(true);
         }
         setPreparationBeforeGame(gamemode, difficulty);
@@ -82,20 +80,24 @@ function Home({ setGamemode, gamemode, difficulty, setDifficulty }) {
             </div>
             <nav id="nav-menu">
                 <ul>
-                    <li>
-                        <Link
-                            to="/battleship/battle"
-                        >
-                            Start Game
+                    <div>
+                        <li>
+                            <Link
+                                to="/battleship/battle"
+                            >
+                                Start Game
                             </Link>
-                    </li>
-                    <li>
-                        <Link
-                            to="/battleship/themes"
-                        >
-                            Themes
+                        </li>
+                    </div>
+                    <div>
+                        <li>
+                            <Link
+                                to="/battleship/themes"
+                            >
+                                Themes
                             </Link>
-                    </li>
+                        </li>
+                    </div>
                 </ul>
             </nav>
             <Settings

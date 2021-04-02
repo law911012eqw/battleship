@@ -10,6 +10,11 @@ li{ list-style-type: none; }
 label {color: aliceblue; }
 
 /* SELECT STYLING */
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  text-indent: 1px;
+}
 .custom-select{
   font-size: 14px;
   margin: 0 12px;
@@ -22,7 +27,7 @@ label {color: aliceblue; }
   position: absolute;
   top: 0;
   right: 0;
-  width: 50%;
+  width: 30%;
   height: 100%;
   text-align: center;
   font-size: 28px;
@@ -30,20 +35,22 @@ label {color: aliceblue; }
   color: rgba(255, 255, 255, 0.5);
   pointer-events: none;
 }
+.custom-select::after{
+  transform: rotate(30deg);
+}
 .custom-select select {
-  background-color: #2190eb;
+  background-color: #2b91e4;
+  border: 2px solid #60b1f3;
   color: aliceblue;
   padding: 12px;
-  width: 100px;
-  border: none;
+  width: 100px; 
   font-size: 0.7rem;
   box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
-  -webkit-appearance: button;
-  appearance: button;
   outline: none;
 }
 .custom-select:hover::before {
   color: rgba(255, 255, 255, 0.7);
+  transform: rotate(90deg) scale(0.7);
 }
 
 .custom-select select option {
@@ -87,7 +94,7 @@ label {color: aliceblue; }
 }
 #menu{
   position: absolute;
-  top: 30%;
+  top: 40%;
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
@@ -96,6 +103,14 @@ label {color: aliceblue; }
   display: flex;
   justify-content: space-around;
 }
+#nav-menu div{
+  background:rgb(158, 146, 146);
+  padding: 5px 12px;
+  margin-bottom: 20px;
+  border-radius: 30%;
+  border: 2px solid rgb(189, 173, 173);
+  box-shadow: 2px 2px 3px 0 rgba(0, 0, 0, 0.748);
+}
 #nav-menu ul{
   margin-right: 30px;
 }
@@ -103,7 +118,10 @@ label {color: aliceblue; }
   cursor: pointer;
 }
 #nav-menu li { margin: 4px; }
-#nav-menu a{ color: rgb(212, 235, 250); }
+#nav-menu a{ 
+  color: rgb(212, 235, 250); 
+  text-decoration: none;
+}
 #nav-menu a:hover{
   color: rgb(11, 79, 139);
   cursor: crosshair;

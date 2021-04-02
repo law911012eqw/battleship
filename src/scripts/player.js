@@ -30,12 +30,26 @@ export default function Player(initialTurn, player, difficulty, size) {
     //array of legal attacks - used by an AI
     const aiLegalAtks = randomPlays(size);
 
+    //AI move algorithm
     const aiMove = (moves) => {
-        if (AILEVEL == 1 && moves.length !== 0) {
-            //takes and removes an element using a random index
-            const move = moves.splice(randomNum(moves.length - 1), 1);
-            return [].concat(...move);
+        //These two are considered previous values after the specification of move coordinate
+        const prevPosNum = gameboard.getOccupiedPos().length;
+        const prevShipsLeft = gameboard.getCurrentTotalShips();
+        //takes and removes an element using a random index
+        const move = moves.splice(randomNum(moves.length - 1), 1);
+        return AILEVEL == 1 && moves.length !== 0 ? [].concat(...move) : smartAIMove(prevPosNum, prevShipsLeft, move);
+            
+    }
+
+    const smartAIMove = (prevPosNum, prevShipsLeft, m) => {
+        const posNum = gameboard.getOccupiedPos().length;
+        const shipsLeft = gameboard.getCurrentTotalShips();
+        let move = [].concat(...m);
+        if(prevPosNum !== posNum && prevShipsLeft == shipsLeft){
+            
+            move = {x: m.x, y: m.y}
         }
+        return move;
     }
     const togglePlayerTurn = (turn) => { return !turn; }
     return {
