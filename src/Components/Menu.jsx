@@ -60,7 +60,6 @@ function Home({ setGamemode, gamemode, difficulty, setDifficulty }) {
     useEffect(() => {
         const setPreparationBeforeGame = (gamemode, difficulty) => {
             setGameType(parseInt(gamemode.value), parseInt(difficulty.valA), parseInt(difficulty.valB));
-            // setArePlayersSet(true);
         }
         setPreparationBeforeGame(gamemode, difficulty);
     }, [gamemode, difficulty])

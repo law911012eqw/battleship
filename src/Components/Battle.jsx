@@ -1,31 +1,49 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 import ReturnToMenu from './ReturnToMenu';
-import { Player1, Player2, autoBattle, turnCount, randomize } from '../scripts/main'
+import { Player1, Player2, autoBattle, randomize, playerAttack, setGameType } from '../scripts/main'
 
-export default function Battle({ gamemode, difficulty }) {
+export default function Battle({ gamemode, difficulty}) {
+    //viewport width used for canvas size
     const [width] = useState(window.innerWidth);
 
-    //Player states
-    const [turnCounter, setTurnCounter] = useState(turnCount);
+    //Players states
+    const [P1, setP1] = useState(Player1);
+    const [P2, setP2] = useState(Player2);
+
     const [winner, setWinner] = useState(null);
-    const [P1,] = useState(Player1);
-    const [P2,] = useState(Player2);
-
-    //Possible nstructions for the player or both parties.
-    const instructions = ['Place the ships', 'Start the game', 'Destroy the enemy\'s ships', 'Just watch'];
     const [start, setStart] = useState(false);
+    const [click, setClick] = useState();
 
-    //Immutable variable
-    const SIZE = width * .26;
+    //set the current player
+    const [currentTurn, setCurrentTurn] = useState(Player1);
 
-    //Canvas
+    //Immutable and conditionally-based variable
+    const SIZE = (width >= 800) ? width * .22 : width * .30;
+
+    //Canvas stuff
     const cv1Ref = useRef(null);
     const cv2Ref = useRef(null);
 
     const handleStartButton = () => {
         if (!start) {
             setStart(true);
+        }
+    }
+
+    const handleRestartButton = () => {
+        const cv1 = cv1Ref.current;
+        const cv2 = cv2Ref.current;
+        const ctx1 = cv1.getContext('2d');
+        const ctx2 = cv2.getContext('2d');
+        if(start) {
+            setStart(false);
+            setWinner(false);
+            setGameType(parseInt(gamemode.value), parseInt(difficulty.valA), parseInt(difficulty.valB));
+            setP1(Player1);
+            setP2(Player2);
+            drawBoard(ctx1, SIZE, P1);
+            drawBoard(ctx2, SIZE, P2);
         }
     }
 
@@ -66,24 +84,24 @@ export default function Battle({ gamemode, difficulty }) {
         const pos = player.gameboard.shipsOnTheBoard;
         const occupiedPos = player.gameboard.getOccupiedPos();
         const board = player.gameboard.board;
-
+        ctx.clearRect(0,0,SQR,SQR); 
         board.forEach((row, r) => {
             row.forEach((col, c) => {
                 //Auto visualize ships in AI board
                 if (occupiedPos.filter(o => o.x === r && o.y === c).length !== 1) {
                     drawSquare(c, r, ctx, SQR);
                 }
-                visualizeBoardForAIvsAI(pos, c, r, ctx, SQR);
+                visualizeBoardForAIvsAI(player, pos, c, r, ctx, SQR);
             })
         })
     }
 
-    const visualizeBoardForAIvsAI = (player, pos, c, r, ctx, SQR) => {
-        if (player.isHuman == false && pos.filter(o => o.pos[0].x === r && o.pos[0].y === c).length == 1) {
+    const visualizeBoardForAIvsAI = (p, pos, c, r, ctx, SQR) => {
+        if (pos.filter(o => o.pos[0].x === r && o.pos[0].y === c).length == 1) {
             for (const ship of pos) {
                 if (ship.pos[0].x === r && ship.pos[0].y === c) {
                     if (ship.pos[0].x === r && ship.pos[1].x === r) {
-                        drawShip(c, r, ctx, SQR, ship.pos.length, 1)
+                        drawShip(c, r, ctx, SQR, ship.pos.length, 1);
                     } else {
                         drawShip(c, r, ctx, SQR, ship.pos.length, 0);
                     }
@@ -112,7 +130,6 @@ export default function Battle({ gamemode, difficulty }) {
         const board = player.gameboard.board;
         //const occupiedPos = player.gameboard.getOccupiedPos();
         const recentAttackedPos = player.gameboard.getRecentCoordinate();
-        console.log(recentAttackedPos);
         board.forEach((row, r) => {
             row.forEach((col, c) => { //0 = unattacked, 1 = recency(by 1), 2 = already marked
                 if (col[1] === 1) {
@@ -200,9 +217,9 @@ export default function Battle({ gamemode, difficulty }) {
             </div>
         )
     }
-    const shipContainer = () => {
+    // const shipContainer = () => {
 
-    }
+    // }
 
     //Displays turn or final outcome for the user to see
     const displayTurnOrWinner = () => {
@@ -220,6 +237,20 @@ export default function Battle({ gamemode, difficulty }) {
         )
     }
 
+    //Possible instructions for the player or both parties.
+    const displayInstruction = () => {
+        if (winner) return(<h2>{'Game ended'}</h2>);
+        if (P1.isHuman || P2.isHuman && !start) {
+            return (<h2>{'Place the ships'}</h2>)
+        } else if (P1.isHuman || P2.isHuman && start) {
+            return (<h2>{'Destroy the enemy\'s ships'}</h2>)
+        }
+        if (!start) {
+            return (<h2>{'Start the battle'}</h2>)
+        }
+        return (<h2>{'Get some popcorn'}</h2>)
+    }
+    //Buttons for gameboard property mutation
     const displayBeforeStartButtons = (id) => {
         return (
             <div className="button-container">
@@ -231,22 +262,33 @@ export default function Battle({ gamemode, difficulty }) {
                     >
                         Randomize
                     </button>
-                    <button
-                        className="in-game-btn"
-                        onClick={handleStartButton}
-                    >
-                        Start Game
-                    </button>
                 </div>
             </div>
         )
     }
 
+    const displayUpperButtons = () => {
+        return (
+            <div id="upper-button-container">
+                <button
+                    onClick={!start ? handleStartButton : handleRestartButton}
+                >
+                    {!start ? <i class="fas fa-play"></i> : <i class="fas fa-redo-alt"></i>}
+
+                </button>
+                <button>
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button>
+                    <i class="fas fa-volume-down"></i>
+                </button>
+            </div>
+        )
+    }
     //Initial render of empty gameboard
     useEffect(() => {
         const cv1 = cv1Ref.current;
         const cv2 = cv2Ref.current;
-        console.log(cv1, cv2);
         const ctx1 = cv1.getContext('2d');
         const ctx2 = cv2.getContext('2d');
         drawBoard(ctx1, SIZE, P1);
@@ -255,20 +297,67 @@ export default function Battle({ gamemode, difficulty }) {
 
     //Main side-effects of present gameplay
     useEffect(() => {
+        console.log('Turn 2');
         const cv1 = cv1Ref.current;
         const cv2 = cv2Ref.current;
         const ctx1 = cv1.getContext('2d');
         const ctx2 = cv2.getContext('2d');
+        const sz = SIZE * 0.1;
+
+        // const cleanUpFunction = (cv) => {
+        //     cv.removeEventlistener('mousedown', function (e) {
+        //         getCursorPosition(cv, e)
+        //     })
+        // }
+
+        const getCursorPosition = (p, cvs, event) => {
+            const rect = cvs.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            playerAttack(p, Math.round((x - sz / 2) / sz), Math.round((y - sz / 2) / sz));
+        }
+
+        //Allow the human players to choose a coordinates to attack
+        const startHumanAttack  = () => {
+            //Conditionally apply event listener
+            if (P1.turn && start) {
+                cv2.addEventListener('mousedown', function (e) {
+                    getCursorPosition(P2, cv2, e);
+                    setCurrentTurn(P2);
+                })
+            } else if (P2.turn && start) {
+                cv1.addEventListener('mousedown', function (e) {
+                    getCursorPosition(P1, cv1, e);
+                    setCurrentTurn(P1);
+                })
+            }
+        }
+
         //start the round
-        const startRound = () => {
-            autoBattle(P1, P2);
-            setTurnCounter(turnCount);
+        const startAiAttack = () => {
+            if (P1.turn) {
+                autoBattle(P1, P2);
+                simulateBattleship(ctx2, SIZE, P2);
+                setCurrentTurn(P2);
+            } else if (P2.turn) {
+                autoBattle(P1, P2);
+                simulateBattleship(ctx1, SIZE, P1);
+                setCurrentTurn(P1);
+            }
         }
 
         //Delay attack
         async function attackDelay(ms) {
             setTimeout(() => {
-                checkCurrentPlayerTurn();
+                if(P1.isWinner || P2.isWinner){
+                    setWinner(true);
+                    return;
+                }
+                if(!currentTurn.isHuman && currentTurn.turn){
+                    startAiAttack();
+                    return;
+                }
+                startHumanAttack();
             }, ms)
             return;
         }
@@ -276,36 +365,32 @@ export default function Battle({ gamemode, difficulty }) {
         //check which player is the current turn
         async function checkCurrentPlayerTurn() {
             if (P1.isWinner !== true || P2.isWinner !== true) {
-                await attackDelay(500);
-                if (P1.turn) {
-                    simulateBattleship(ctx2, SIZE, P2);
-                } else if (P2.turn) {
-                    simulateBattleship(ctx1, SIZE, P1);
-                }
-                setWinner(startRound());
-            }
-            else {
-                return;
+                await attackDelay(100);
             }
         }
 
         const startGame = () => {
-            if (start) {
+            if (start && !winner) {
                 checkCurrentPlayerTurn();
             }
         }
-        console.log(start);
         startGame();
-
         return (() => {
             clearTimeout(attackDelay);
         })
-
-    }, [start])
+    }, [currentTurn, start])
 
     return (
         <div id="Battle">
-            <ReturnToMenu />
+            <div id="upper-container">
+                <ReturnToMenu />
+                {displayUpperButtons()}
+            </div>
+            <div id="instructions-parent-container">
+                <div id="instructions-wrapper">
+                    {displayInstruction()}
+                </div>
+            </div>
             <div id="main-battle">
                 {canvasContainer(cv1Ref, SIZE, "cv1", P1)}
                 {P1 !== null || P2 !== null ? displayTurnOrWinner() : null}

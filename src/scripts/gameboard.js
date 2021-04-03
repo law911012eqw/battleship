@@ -146,6 +146,10 @@ export default function Gameboard(size){
                 recentCoordinateAttackedShip = hit[0];
                 return [].concat(...hit);
             }
+                        // } else {
+            //     recentAtk = hit[0];
+            //     return [].concat(...hit);
+            // }
         });
     }
 

@@ -1,7 +1,6 @@
 import Player from './player'; //arguments = (initialTurn,isHuman,difficulty -> 1 for easy and 2 for hard, otherwise null if player)
 
 //Global variables 
-export let turnCount = 0;
 const MAX = 10;
 
 //Initial creation of player objects
@@ -53,7 +52,6 @@ const checkWinner = (P1, P2) => {
 
 //Auto function for AIvsAI gamemode
 export const autoBattle = (P1, P2) => {
-    turnCount++;
     if (P1.turn) {
         const atk = P1.aiMove(P1.aiLegalAtks);
         const ships = P2.gameboard.shipsOnTheBoard;
@@ -69,7 +67,6 @@ export const autoBattle = (P1, P2) => {
 
 //Attack the ships of the other party
 export const playerAttack = (p, x, y) => {
-    turnCount++;
     const ships = p.gameboard.shipsOnTheBoard;
     p.gameboard.receiveAttack(x, y, ships);
     checkWinner(Player1, Player2);

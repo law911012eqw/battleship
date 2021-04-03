@@ -6,6 +6,7 @@
 
 /* GLOBAL TAGS */
 .fas, p, li{ color: rgb(7,67,114); }
+button{ cursor: pointer; }
 li{ list-style-type: none; }
 label {color: aliceblue; }
 
@@ -124,11 +125,39 @@ select {
 }
 #nav-menu a:hover{
   color: rgb(11, 79, 139);
-  cursor: crosshair;
+  cursor: pointer;
 }
 .cv{
   cursor: crosshair;
   box-shadow: 2px 2px 8px 0 rgba(56, 56, 56, 0.699);
+}
+
+/*** Instructions Wrapper ***/
+#instructions-parent-container{
+  text-align: center;
+}
+#instructions-wrapper{
+  display: inline-block;
+  text-align: center;
+  border-top: 4px solid rgb(116, 184, 243);
+  border-left: 4px solid rgb(116, 184, 243);
+  border-right: 3px solid rgb(35, 98, 153);
+  border-bottom: 3px solid rgb(35, 98, 153);
+  background: rgb(96, 171, 236);
+  width: max-content;
+  padding: 0 25px;
+}
+#instructions-wrapper > h2{
+  color: rgb(7,67,114);
+  font-weight: 4.0;
+  text-align: center;
+  align-self: center;
+}
+
+/*** Upper Container ***/ 
+#upper-container{
+  display: flex;
+  justify-content: space-between;
 }
 
 /*** Return to Menu SECTION ***/
@@ -143,6 +172,29 @@ select {
   text-decoration: underline;
 }
 
+/*** Buttons in upper section ***/
+#upper-button-container{
+  display: flex;
+  flex-flow: row;
+  margin: 6px;
+}
+#upper-button-container > button{
+  border-top: 4px solid rgb(116, 184, 243);
+  border-left: 4px solid rgb(116, 184, 243);
+  border-right: 3px solid rgb(35, 98, 153);
+  border-bottom: 3px solid rgb(35, 98, 153);
+  padding: 14px 10px;
+  background: rgb(14, 74, 121);
+  margin: 0 10px;
+  transition: transform 0.3s ease;
+  transform: translateX(0px);
+}
+#upper-button-container > button:hover{
+  transform: translateY(10px);
+}
+#upper-button-container .fas{
+  color: rgb(131, 182, 226);
+}
 /*** Battle Section ***/
 #main-battle{
   display: flex;
@@ -158,3 +210,12 @@ select {
 }
 
 /***BUTTON CONTAINERS***/
+.in-game-btn{
+  border: 2px outset rgb(116, 184, 243);
+  color: aliceblue;
+  background: rgb(60, 126, 184);
+} 
+.in-game-btn:hover{
+  background: rgb(66, 152, 226);
+  border: 3px inset rgb(144, 199, 247);
+}
