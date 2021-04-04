@@ -61,7 +61,6 @@ export default function Gameboard(size){
         isCoordinatesTaken = validateCoordinates(x, y, len, n1);
         //call this function again when the coordinate is taken, otherwise, proceed to the process
         if (isCoordinatesTaken === true) {
-            console.log('recursion succeeded, what now?');
             return assignCoordinates(len, bh) //restart the function
         }
         return arr;

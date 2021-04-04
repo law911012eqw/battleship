@@ -30,6 +30,11 @@ export default function Player(initialTurn, player, difficulty, size) {
     //array of legal attacks - used by an AI
     const aiLegalAtks = randomPlays(size);
 
+    const toggleLegality = (x,y) => {
+        const index = aiLegalAtks.findIndex(atk => atk[0] === x & atk[1] === y);
+        console.log(index);
+        aiLegalAtks.splice(index, 1);
+    }
     //AI move algorithm
     const aiMove = (moves) => {
         //These two are considered previous values after the specification of move coordinate
@@ -61,6 +66,7 @@ export default function Player(initialTurn, player, difficulty, size) {
         selectedAtk,
         isWinner,
         isHuman,
-        displayName
+        displayName,
+        toggleLegality
     }
 }

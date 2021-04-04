@@ -66,11 +66,16 @@ export const autoBattle = (P1, P2) => {
 }
 
 //Attack the ships of the other party
-export const playerAttack = (p, x, y) => {
-    const ships = p.gameboard.shipsOnTheBoard;
-    p.gameboard.receiveAttack(x, y, ships);
+export const playerAttack = (attacker, defender, x, y) => {
+    console.log(y, x);
+    console.log(attacker.aiLegalAtks);
+    if(!attacker.aiLegalAtks.some(o => o[0] === x && o[1] === y)) return true;
+    const ships = defender.gameboard.shipsOnTheBoard;
+    attacker.toggleLegality(x,y);
+    defender.gameboard.receiveAttack(y, x, ships);
     checkWinner(Player1, Player2);
     toggleTurnForBothPlayers(Player1, Player2);
+    return false;
 }
 
 export const randomize = (player) => {
