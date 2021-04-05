@@ -17,6 +17,17 @@ These are the following ships exactly as the classes of ships from the old game.
 ### Gamemodes 
 There are two gamemodes: Player vs Player (PvP) and Player vs AI with an implementation of two different difficulties. Additionally, a gameode AI vs AI is included specifically for debugging purposes or just to have fun with coding.
 
+### Issues to fix
+**Minor**:
+* Prevent the first player from attacking the other board after restarting
+
+### TODOS
+* Implement PvP component design so players cannot see each other's ships
+* Design outcome in a list format during the game
+* Add an audio associated with mouse event
+* Work with theme component
+* Create secondary difficulty mainly to polish AI move ruleset
+
 ## Available Scripts
 
 In the project directory, you can run:
