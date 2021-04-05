@@ -4,11 +4,11 @@ import Player from './player'; //arguments = (initialTurn,isHuman,difficulty -> 
 const MAX = 10;
 
 //Initial creation of player objects
-export let Player1 = null;
-export let Player2 = null;
+export let Player1 = Player(true, true, 1, MAX);;
+export let Player2 = Player(false, false, 1, MAX);
 
 //Set the gamemode including the AI difficulty
-export const setGameType = (gamemode, p1diff, p2diff) => {
+export async function setGameType(gamemode, p1diff, p2diff){
     if (gamemode == 0) {
         Player1 = Player(true, true, null, MAX);
         Player2 = Player(false, true, null, MAX);
@@ -67,8 +67,6 @@ export const autoBattle = (P1, P2) => {
 
 //Attack the ships of the other party
 export const playerAttack = (attacker, defender, x, y) => {
-    console.log(y, x);
-    console.log(attacker.aiLegalAtks);
     if(!attacker.aiLegalAtks.some(o => o[0] === x && o[1] === y)) return true;
     const ships = defender.gameboard.shipsOnTheBoard;
     attacker.toggleLegality(x,y);
@@ -82,4 +80,10 @@ export const randomize = (player) => {
     const p = player.gameboard;
     p.resetArray(p.occupiedPos);
     p.shipsOnTheBoard = p.addShipsToTheBoard();
+}
+
+export const resetGame = (player) => {
+    randomize(player);
+    player.gameboard.resetBoard();
+    player.aiLegalAtks = player.refillLegalAtks();
 }

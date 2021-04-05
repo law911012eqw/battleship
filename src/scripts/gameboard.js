@@ -1,6 +1,6 @@
 import Ship from './ship'
 
-export default function Gameboard(size){
+export default function Gameboard(size) {
     const height = size; //immutable board height
     const width = size; //mutable board width
     //default sets of ships
@@ -11,7 +11,7 @@ export default function Gameboard(size){
         ['Submariner', 3],
         ['Destroyer', 2]
     ]
-    let recentCoordinateAttackedShip = {x: -15, y: -15};
+    let recentCoordinateAttackedShip = { x: -15, y: -15 };
     const twoDimensionalArrayGenerator = (outerLen, innerLen) => {
         let arr = [];
         for (let i = 0; i < outerLen; i++) {
@@ -33,7 +33,7 @@ export default function Gameboard(size){
         while (arr.length > 0) {
             arr.pop();
         }
-    } 
+    }
     const randomNumGen = (len) => { //
         const n = (size - len);
         return Math.floor(Math.random() * n) + 1;
@@ -89,6 +89,13 @@ export default function Gameboard(size){
         return occupiedPos.some(o => n1 === 0 ? (o.x >= x && o.x <= x + len) && o.y === y : (o.y >= x && o.y <= x + len) && o.x === y);
     }
 
+    const resetBoard = () => {
+        board.map(rw => {
+            rw.map(cl => {
+                cl[1] = 0;
+            })
+        })
+    }
     //An array to keep the ship factories and its board positions
     const shipsOnTheBoard = addShipsToTheBoard();
     let currentTotalShips = shipsOnTheBoard.length;
@@ -128,7 +135,7 @@ export default function Gameboard(size){
                 if (pos.x === x && pos.y === y) {
                     ship.ship.hit(); //degrade the quality of the ship by decrementing it's health
                     checkShipState(ship); //check it's state whether it's still floating or sunk
-                    recentAtk = {x: x, y: y}
+                    recentAtk = { x: x, y: y }
                     removeCurrentOccupiedPosIfHit(occupiedPos, x, y); //remove from current occupied positions
                     return false;
                 }
@@ -145,7 +152,7 @@ export default function Gameboard(size){
                 recentCoordinateAttackedShip = hit[0];
                 return [].concat(...hit);
             }
-                        // } else {
+            // } else {
             //     recentAtk = hit[0];
             //     return [].concat(...hit);
             // }
@@ -164,6 +171,7 @@ export default function Gameboard(size){
         addShipsToTheBoard,
         board,
         resetArray,
+        resetBoard,
         missedAtks,
         recentAtk,
         currentTotalShips,

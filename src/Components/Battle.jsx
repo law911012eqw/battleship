@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 import ReturnToMenu from './ReturnToMenu';
-import { Player1, Player2, autoBattle, randomize, playerAttack, setGameType } from '../scripts/main'
+import { Player1, Player2, autoBattle, randomize, playerAttack, resetGame } from '../scripts/main'
 
 export default function Battle({ gamemode, difficulty }) {
     //viewport width used for canvas size
-    const [width] = useState(window.innerWidth);
+    const width = window.innerWidth;
 
-    //Players states
+    //Player factory function as a state
     const [P1, setP1] = useState(Player1);
     const [P2, setP2] = useState(Player2);
 
@@ -15,7 +15,7 @@ export default function Battle({ gamemode, difficulty }) {
     const [winner, setWinner] = useState(null);
     const [start, setStart] = useState(false);
 
-    //set the current player
+    //Set the current player
     const [currentTurn, setCurrentTurn] = useState([Player1.turn, Player1.isHuman]);
 
     //Used as a fake count to trigger an associated useEffect as a dependency value
@@ -30,23 +30,38 @@ export default function Battle({ gamemode, difficulty }) {
 
     const handleStartButton = () => {
         if (!start) {
-            setStart(true);
+            setStart(!start);
+            setCurrentTurn([P1.turn, P1.isHuman]);
         }
     }
 
-    const handleRestartButton = () => {
+    //Reset all the propety of palyer and gameboard functions to initial state
+    function setPlayerAsStates() {
+        return new Promise(resolve => {
+            setTimeout(() => {
+                resetGame(P1);
+                resetGame(P2);
+                resolve('resolved');
+            }, 100);
+        });
+    }
+
+    const resetStates = () => {
+        setStart(!start);
+        setWinner(false);
+    }
+
+    //Reset all states to initial value
+    async function HandleRestartButton() {
         const cv1 = cv1Ref.current;
         const cv2 = cv2Ref.current;
         const ctx1 = cv1.getContext('2d');
         const ctx2 = cv2.getContext('2d');
         if (start) {
-            setStart(false);
-            setWinner(false);
-            setGameType(parseInt(gamemode.value), parseInt(difficulty.valA), parseInt(difficulty.valB));
-            setP1(Player1);
-            setP2(Player2);
+            await setPlayerAsStates();
             drawBoard(ctx1, SIZE, P1);
             drawBoard(ctx2, SIZE, P2);
+            resetStates();
         }
     }
 
@@ -69,11 +84,12 @@ export default function Battle({ gamemode, difficulty }) {
         ctx.fillRect(x * sz, y * sz, sz, sz);
         ctx.strokeStyle = 'rgba(7,100,176,0.3)';
         ctx.strokeRect(x * sz, y * sz, sz, sz);
+        ctx.lineWidth = 1;
     }
 
     const drawShip = (x, y, ctx, sz, len, direction) => {
         ctx.fillStyle = 'rgb(224,224,224)';
-        ctx.strokeStyle = 'rgb(0,0,0)';
+        ctx.strokeStyle = 'rgb(34,34,34)';
         for (let i = 0; i < len; i++) {
             direction === 0 ? ctx.fillRect(x * sz, y * sz, sz, sz * len) : ctx.fillRect(x * sz, y * sz, sz * len, sz);
         }
@@ -86,7 +102,7 @@ export default function Battle({ gamemode, difficulty }) {
         const pos = player.gameboard.shipsOnTheBoard;
         const occupiedPos = player.gameboard.getOccupiedPos();
         const board = player.gameboard.board;
-        ctx.clearRect(0, 0, SQR, SQR);
+        // ctx.clearRect(0, 0, SQR, SQR);
         board.forEach((row, r) => {
             row.forEach((col, c) => {
                 //Auto visualize ships in AI board
@@ -225,12 +241,9 @@ export default function Battle({ gamemode, difficulty }) {
     //Possible instructions for the player or both parties.
     const displayInstruction = () => {
         if (winner) return (<h2>{'Game ended'}</h2>);
-        if (P1.isHuman || P2.isHuman && !start) {
-            return (<h2>{'Place the ships'}</h2>)
-        } else if (P1.isHuman || P2.isHuman && start) {
-            return (<h2>{'Destroy the enemy\'s ships'}</h2>)
-        }
-        if (!start) {
+        if ((P1.isHuman || P2.isHuman) && start) return (<h2>{'Destroy the enemy\'s ships'}</h2>)
+        if ((P1.isHuman || P2.isHuman) && !start) return (<h2>{'Place the ships'}</h2>)
+        if (gamemode.value == 2 && !start) {
             return (<h2>{'Start the battle'}</h2>)
         }
         return (<h2>{'Get some popcorn'}</h2>)
@@ -257,7 +270,7 @@ export default function Battle({ gamemode, difficulty }) {
         return (
             <div id="upper-button-container">
                 <button
-                    onClick={!start ? handleStartButton : handleRestartButton}
+                    onClick={!start ? handleStartButton : HandleRestartButton}
                 >
                     {!start ? <i className="fas fa-play"></i> : <i className="fas fa-redo-alt"></i>}
 
@@ -268,6 +281,14 @@ export default function Battle({ gamemode, difficulty }) {
                 <button>
                     <i className="fas fa-volume-down"></i>
                 </button>
+            </div>
+        )
+    }
+
+    const showModal = () => {
+        return(
+            <div className="restart-modal">
+                <p>...restarting</p>
             </div>
         )
     }
@@ -302,22 +323,21 @@ export default function Battle({ gamemode, difficulty }) {
             if (attacker.turn && start) {
                 cv.addEventListener('mousedown', function handler(e) {
                     const attackedPosition = getCursorPosition(attacker, defender, cv, e);
-                    console.log(attackedPosition);
-                    if(attackedPosition){
-                        // setFakeCount(fakeCount+1);
+                    if (attackedPosition) {
+                        setFakeCount(fakeCount + 1);
                         return cv.removeEventListener('mousedown', handler);
-                    } 
-                    simulateBattleship(ctx, SIZE, P2);
+                    }
+                    simulateBattleship(ctx, SIZE, defender);
                     setCurrentTurn([defender.turn, defender.isHuman]);
                     cv.removeEventListener('mousedown', handler);
                 })
-            } 
+            }
         }
         //Allow the human players to choose a coordinates to attack
         const startHumanAttack = () => {
             //Conditionally apply event listener
-            humanAttack(P1,P2,cv2,ctx2);
-            humanAttack(P2,P1,cv1,ctx1);
+            humanAttack(P1, P2, cv2, ctx2);
+            humanAttack(P2, P1, cv1, ctx1);
         }
 
         //start the round
@@ -350,7 +370,7 @@ export default function Battle({ gamemode, difficulty }) {
             }
             //index 0 refers to player turn, index 1 refers whether player is human
             if (!currentTurn[1] && currentTurn[0]) {
-                await attackDelay(500);
+                await attackDelay(50);
             }
             if (currentTurn[1] && currentTurn[0]) {
                 startHumanAttack();
@@ -364,7 +384,7 @@ export default function Battle({ gamemode, difficulty }) {
             }
         }
         startGame();
-        console.log('Is current player human:' + currentTurn[1]);
+        console.log(start, 'Is current player human: ' + currentTurn[1]);
         return (() => {
             clearTimeout(attackDelay);
         })

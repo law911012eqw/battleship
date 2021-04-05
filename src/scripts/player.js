@@ -3,9 +3,9 @@ import Gameboard from './gameboard';
 export default function Player(initialTurn, player, difficulty, size) {
     let turn = initialTurn;
     const isHuman = player; //Purpose: to avoid configure the wrong subject
-    const displayName = 'whatever'; //To identify which party is which
+    const displayName = isHuman ? 'Player' : 'AI'; //To identify which party is which
     let isWinner = false; //Determine the winner
-    
+
     //Only applies to AI
     const AILEVEL = difficulty; // 1 or 2
     const randomNum = (n) => {
@@ -28,11 +28,13 @@ export default function Player(initialTurn, player, difficulty, size) {
         return [x, y];
     }
     //array of legal attacks - used by an AI
-    const aiLegalAtks = randomPlays(size);
+    let aiLegalAtks = randomPlays(size);
+    const refillLegalAtks = () => {
+        return randomPlays(size);
+    }
 
-    const toggleLegality = (x,y) => {
+    const toggleLegality = (x, y) => {
         const index = aiLegalAtks.findIndex(atk => atk[0] === x & atk[1] === y);
-        console.log(index);
         aiLegalAtks.splice(index, 1);
     }
     //AI move algorithm
@@ -43,16 +45,14 @@ export default function Player(initialTurn, player, difficulty, size) {
         //takes and removes an element using a random index
         const move = moves.splice(randomNum(moves.length - 1), 1);
         return AILEVEL == 1 && moves.length !== 0 ? [].concat(...move) : smartAIMove(prevPosNum, prevShipsLeft, move);
-            
     }
 
     const smartAIMove = (prevPosNum, prevShipsLeft, m) => {
         const posNum = gameboard.getOccupiedPos().length;
         const shipsLeft = gameboard.getCurrentTotalShips();
         let move = [].concat(...m);
-        if(prevPosNum !== posNum && prevShipsLeft == shipsLeft){
-            
-            move = {x: m.x, y: m.y}
+        if (prevPosNum !== posNum && prevShipsLeft == shipsLeft) {
+            move = { x: m.x, y: m.y }
         }
         return move;
     }
@@ -67,6 +67,7 @@ export default function Player(initialTurn, player, difficulty, size) {
         isWinner,
         isHuman,
         displayName,
-        toggleLegality
+        toggleLegality,
+        refillLegalAtks
     }
 }
