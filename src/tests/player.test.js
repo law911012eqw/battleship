@@ -6,7 +6,7 @@ const toggleTurnForBothPlayers = (p1, p2) => {
     p2.turn = p2.togglePlayerTurn(p2.turn);
 }
 
-test('Toggle players\' turn after an attack ', () => {
+test('Toggle players\' turn after an attack', () => {
     const Human = Player(true, true, null, 10);
     const AI = Player(false, false, 1, 10);
     toggleTurnForBothPlayers(Human, AI);

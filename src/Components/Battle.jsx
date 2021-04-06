@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 import ReturnToMenu from './ReturnToMenu';
+import Outcomes from './Outcomes';
 import { Player1, Player2, autoBattle, randomize, playerAttack, resetGame } from '../scripts/main'
 
 export default function Battle({ gamemode, difficulty }) {
@@ -8,8 +9,8 @@ export default function Battle({ gamemode, difficulty }) {
     const width = window.innerWidth;
 
     //Player factory function as a state
-    const [P1, setP1] = useState(Player1);
-    const [P2, setP2] = useState(Player2);
+    const [P1,] = useState(Player1);
+    const [P2,] = useState(Player2);
 
     //Used to manually start and end the game
     const [winner, setWinner] = useState(null);
@@ -28,10 +29,18 @@ export default function Battle({ gamemode, difficulty }) {
     const cv1Ref = useRef(null);
     const cv2Ref = useRef(null);
 
+    const [toggleP1ShipVisibility, setToggleP1ShipVisibility] = useState(true);
+    const [toggleP2ShipVisibility, setToggleP2ShipVisibility] = useState(true);
+
+    //Triggered after a click on start button
     const handleStartButton = () => {
+        if (!start && gamemode.value === 0){
+            setToggleP1ShipVisibility(false);
+            setToggleP2ShipVisibility(false);
+        }
         if (!start) {
             setStart(!start);
-            setCurrentTurn([P1.turn, P1.isHuman]);
+            resetStates();
         }
     }
 
@@ -42,13 +51,14 @@ export default function Battle({ gamemode, difficulty }) {
                 resetGame(P1);
                 resetGame(P2);
                 resolve('resolved');
-            }, 100);
+            }, 200);
         });
     }
 
     const resetStates = () => {
         setStart(!start);
         setWinner(false);
+        setCurrentTurn([P1.turn, P1.isHuman]);
     }
 
     //Reset all states to initial value
@@ -59,9 +69,12 @@ export default function Battle({ gamemode, difficulty }) {
         const ctx2 = cv2.getContext('2d');
         if (start) {
             await setPlayerAsStates();
+            setCurrentTurn([P1.turn, P1.isHuman]);
             drawBoard(ctx1, SIZE, P1);
             drawBoard(ctx2, SIZE, P2);
+            console.log(currentTurn);
             resetStates();
+            console.log(currentTurn);
         }
     }
 
@@ -76,6 +89,13 @@ export default function Battle({ gamemode, difficulty }) {
         } else {
             randomize(P2);
             drawBoard(ctx2, SIZE, P2);
+        }
+    }
+    const toggleShipVisibility = (e) => {
+        if (e.target.id.includes('p1')) {
+            setToggleP1ShipVisibility(!toggleP1ShipVisibility);
+        } else {
+            setToggleP2ShipVisibility(!toggleP2ShipVisibility);
         }
     }
     //draw tiles for the board
@@ -102,10 +122,18 @@ export default function Battle({ gamemode, difficulty }) {
         const pos = player.gameboard.shipsOnTheBoard;
         const occupiedPos = player.gameboard.getOccupiedPos();
         const board = player.gameboard.board;
-        // ctx.clearRect(0, 0, SQR, SQR);
+        ctx.clearRect(0, 0, SQR, SQR);
         board.forEach((row, r) => {
             row.forEach((col, c) => {
                 //Auto visualize ships in AI board
+                if(!toggleP1ShipVisibility && player.turn === true) {
+                    drawSquare(c, r, ctx, SQR);
+                    return;
+                }
+                if(!toggleP2ShipVisibility && player.turn === false) {
+                    drawSquare(c, r, ctx, SQR);
+                    return;
+                }
                 if (player.isHuman && occupiedPos.filter(o => o.x === r && o.y === c).length == 1) {
                     visualizeBoardForAIvsAI(pos, c, r, ctx, SQR);
                 } else {
@@ -261,6 +289,13 @@ export default function Battle({ gamemode, difficulty }) {
                     >
                         Randomize
                     </button>
+                    <button
+                        className="in-game-btn"
+                        id={id === 'cv1' ? 'tglVsb-p1' : 'tglVsb-p2'}
+                        onClick={toggleShipVisibility}
+                    >
+                        Toggle visibility
+                    </button>
                 </div>
             </div>
         )
@@ -278,17 +313,6 @@ export default function Battle({ gamemode, difficulty }) {
                 <button>
                     <i className="fas fa-eye"></i>
                 </button>
-                <button>
-                    <i className="fas fa-volume-down"></i>
-                </button>
-            </div>
-        )
-    }
-
-    const showModal = () => {
-        return(
-            <div className="restart-modal">
-                <p>...restarting</p>
             </div>
         )
     }
@@ -301,7 +325,7 @@ export default function Battle({ gamemode, difficulty }) {
         const ctx2 = cv2.getContext('2d');
         drawBoard(ctx1, SIZE, P1);
         drawBoard(ctx2, SIZE, P2);
-    }, [])
+    }, [toggleP1ShipVisibility, toggleP2ShipVisibility])
 
     //Main side-effects of present gameplay
     useEffect(() => {

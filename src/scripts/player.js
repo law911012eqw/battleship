@@ -1,5 +1,5 @@
 import Gameboard from './gameboard';
-
+import kingsMove from '../algorithms/kings_move';
 export default function Player(initialTurn, player, difficulty, size) {
     let turn = initialTurn;
     const isHuman = player; //Purpose: to avoid configure the wrong subject
@@ -37,25 +37,30 @@ export default function Player(initialTurn, player, difficulty, size) {
         const index = aiLegalAtks.findIndex(atk => atk[0] === x & atk[1] === y);
         aiLegalAtks.splice(index, 1);
     }
+
     //AI move algorithm
     const aiMove = (moves) => {
         //These two are considered previous values after the specification of move coordinate
         const prevPosNum = gameboard.getOccupiedPos().length;
         const prevShipsLeft = gameboard.getCurrentTotalShips();
+
         //takes and removes an element using a random index
-        const move = moves.splice(randomNum(moves.length - 1), 1);
-        return AILEVEL == 1 && moves.length !== 0 ? [].concat(...move) : smartAIMove(prevPosNum, prevShipsLeft, move);
+        //DUMB AI RANDOM ATTACK ALGORITHM
+        console.log(difficulty);
+        if(AILEVEL == 1 && moves.length !== 0){
+            const move = moves.splice(randomNum(moves.length - 1), 1);
+            return [].concat(...move);
+        } else if (AILEVEL == 2 && moves.length !== 0){
+            const up = [0, -1];
+            const down = [0, +1];
+            const right = [+1, 0];
+            const left = [-1, 0];
+            let direction = [up, down, right, left];
+            if (direction.length === 0) {direction = direction = [up, down, right, left]; }
+            return kingsMove(gameboard, prevPosNum, prevShipsLeft, moves, direction);
+        }
     }
 
-    const smartAIMove = (prevPosNum, prevShipsLeft, m) => {
-        const posNum = gameboard.getOccupiedPos().length;
-        const shipsLeft = gameboard.getCurrentTotalShips();
-        let move = [].concat(...m);
-        if (prevPosNum !== posNum && prevShipsLeft == shipsLeft) {
-            move = { x: m.x, y: m.y }
-        }
-        return move;
-    }
     const togglePlayerTurn = (turn) => { return !turn; }
     return {
         gameboard,

@@ -135,7 +135,6 @@ export default function Gameboard(size) {
                 if (pos.x === x && pos.y === y) {
                     ship.ship.hit(); //degrade the quality of the ship by decrementing it's health
                     checkShipState(ship); //check it's state whether it's still floating or sunk
-                    recentAtk = { x: x, y: y }
                     removeCurrentOccupiedPosIfHit(occupiedPos, x, y); //remove from current occupied positions
                     return false;
                 }
@@ -149,13 +148,10 @@ export default function Gameboard(size) {
             if (pos.x === x && pos.y === y) {
                 //remove occupied position using a specified coordinates chosen by user
                 const hit = arr.splice(i, 1);
+                console.log(hit);
                 recentCoordinateAttackedShip = hit[0];
                 return [].concat(...hit);
             }
-            // } else {
-            //     recentAtk = hit[0];
-            //     return [].concat(...hit);
-            // }
         });
     }
 

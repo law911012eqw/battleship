@@ -8,7 +8,7 @@ import { setGameType } from '../scripts/main';
 
 export default function Menu() {
     const [gamemode, setGamemode] = useState({ value: '0' }); //0 = both AI, 1 = Player vs AI, 2 = PvP
-    const [difficulty, setDifficulty] = useState({ value: '1', valA: '', valB: '' });
+    const [difficulty, setDifficulty] = useState({ value: '1', valA: '1', valB: '1' });
     const [mark, setMark] = useState(null);
     const [piece, setPiece] = useState(null);
     return (
@@ -88,7 +88,7 @@ function Home({ setGamemode, gamemode, difficulty, setDifficulty }) {
                             </Link>
                         </li>
                     </div>
-                    <div>
+                    {/* <div>
                         <li>
                             <Link
                                 to="/battleship/themes"
@@ -96,7 +96,7 @@ function Home({ setGamemode, gamemode, difficulty, setDifficulty }) {
                                 Themes
                             </Link>
                         </li>
-                    </div>
+                    </div> */}
                 </ul>
             </nav>
             <Settings

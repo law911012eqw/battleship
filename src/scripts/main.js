@@ -23,7 +23,7 @@ export async function setGameType(gamemode, p1diff, p2diff){
 }
 
 //toggle turns
-const toggleTurnForBothPlayers = (p1, p2) => {
+export const toggleTurnForBothPlayers = (p1, p2) => {
     p1.turn = p1.togglePlayerTurn(p1.turn);
     p2.turn = p2.togglePlayerTurn(p2.turn);
 }
@@ -84,6 +84,7 @@ export const randomize = (player) => {
 
 export const resetGame = (player) => {
     randomize(player);
+    if (player.isWinner) { player.isWinner = false; }
     player.gameboard.resetBoard();
     player.aiLegalAtks = player.refillLegalAtks();
 }

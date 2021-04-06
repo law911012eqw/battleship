@@ -5,11 +5,10 @@ export default function Settings({ setGamemode, gamemode, difficulty, setDifficu
         setGamemode({ value: event.target.value });
     }
     const handleDifficultyChange = (event) => {
-        console.log(difficulty);
         if (event.target.id.includes(2) || gamemode.value == 1) {
             setDifficulty({...difficulty, value: event.target.value, valB: event.target.value});
         } else {
-            setDifficulty({...difficulty, value: event.target.value, valA: event.target.value });
+            setDifficulty({...difficulty, value: event.target.value, valA: event.target.value});
         }
     }
     return (
