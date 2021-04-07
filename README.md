@@ -1,5 +1,5 @@
 # Battleship
-It's a recreation of the old classic game called [Battleship](https://en.wikipedia.org/wiki/Battleship_(game)) as a simple webpage game.
+It's a recreation of the old classic game called [Battleship](https://en.wikipedia.org/wiki/Battleship_(game)) as a simple webpage game. Canvas tag is mainly used for the battle gamebaords.
 
 ### Rules
 Place your ships and destroy the enemy ships. As simple as that. 
@@ -20,14 +20,14 @@ There are two gamemodes: Player vs Player (PvP) and Player vs AI with an impleme
 ### Issues to fix
 **Minor**:
 * Prevent the first player from attacking the other board after restarting
-* The previous loser was disallowed to reset the properties of factory functions
+* Restart button is breaking the game functionality
 
 ### TODOS
 4/4/20
-[ ] Implement PvP component design so players cannot see each other's ships
-[ ] Design outcome in a list format during the game
-[ ] Work with theme component
-[ ] Create secondary difficulty mainly to polish AI move ruleset
+- [X] Implement PvP toggle visibility functionality so players cannot see each other's ships
+- [X] Created randomzie ships functionality as the main feature to place ships
+- [ ] Design outcome in a list format during the game
+- [ ] Create secondary difficulty mainly to polish AI move ruleset
 
 ## Available Scripts
 

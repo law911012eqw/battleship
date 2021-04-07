@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
 
 import Battle from './Battle';
-import Themes from './Themes';
 import Settings from './Settings';
 import { setGameType } from '../scripts/main';
 
@@ -37,7 +36,6 @@ function NavigateSwitch({
                 />} />
             <Route exact path="/battleship/battle"
                 children={<Battle gamemode={gamemode} difficulty={difficulty} />} />
-            <Route exact path="/battleship/themes" children={<Themes />} />
         </Switch>
     )
 }
@@ -80,15 +78,6 @@ function Home({ setGamemode, gamemode, difficulty, setDifficulty }) {
                             </Link>
                         </li>
                     </div>
-                    {/* <div>
-                        <li>
-                            <Link
-                                to="/battleship/themes"
-                            >
-                                Themes
-                            </Link>
-                        </li>
-                    </div> */}
                 </ul>
             </nav>
             <Settings

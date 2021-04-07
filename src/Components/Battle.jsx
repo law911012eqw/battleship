@@ -8,6 +8,7 @@ export default function Battle({ gamemode, difficulty }) {
     //STATES
     //viewport width used for canvas size
     const width = window.innerWidth;
+    const height = window.innerHeight;
 
     //Player factory function as a state
     const [P1,] = useState(Player1);
@@ -26,7 +27,7 @@ export default function Battle({ gamemode, difficulty }) {
     const [fakeCount, setFakeCount] = useState(0);
 
     //Immutable and conditionally-based variable
-    const SIZE = (width >= 800) ? width * .28 : width * .35;
+    const SIZE = width < 600 ? width * .60 : width * .20;
 
     //Canvas stuff
     const cv1Ref = useRef(null);
@@ -87,9 +88,6 @@ export default function Battle({ gamemode, difficulty }) {
             drawBoard(ctx1, SIZE, P1);
             drawBoard(ctx2, SIZE, P2);
             resetStates();
-            console.log(Player1.aiLegalAtks);
-            console.log(Player2.AILEVEL);
-            console.log(difficulty);
         }
     }
 
@@ -293,8 +291,8 @@ export default function Battle({ gamemode, difficulty }) {
     const canvasContainer = (ref, size, id, player) => {
         return (
             <div className="base-container">
-                {id === 'cv1' && player !== null ? playerInfo(player) : null}
                 <div className="canvas-container">
+                    {playerInfo(player)}
                     <canvas
                         ref={ref}
                         className="cv"
@@ -306,26 +304,15 @@ export default function Battle({ gamemode, difficulty }) {
                     </canvas>
                     {!start && player.isHuman ? displayBeforeStartButtons(id) : null}
                 </div>
-                {id === 'cv2' && player !== null ? playerInfo(player) : null}
             </div>
         )
     }
 
     //Display the current resources or state of the player
     const playerInfo = (player) => {
-        const currentShips = player.gameboard.getCurrentTotalShips();
-        const currentOccupied = player.gameboard.getOccupiedPos().length;
         return (
             <div className="player-resource-container">
                 <p>{player.displayName}</p>
-                <div className="player-resources">
-                    <i className="fas fa-ship"></i>
-                    <p>{currentShips}/5</p>
-                </div>
-                <div className="player-resources">
-                    <i className="fas fa-splotch"></i>
-                    <p>{currentOccupied}/17</p>
-                </div>
             </div>
         )
     }
@@ -334,13 +321,13 @@ export default function Battle({ gamemode, difficulty }) {
     const displayTurnOrWinner = () => {
         if (!winner) {
             return (
-                <p className="display-turn">
+                <p className={width > 500 ? "display-turn" : "mobile-display-turn"}>
                     {P1.turn ? `${P1.displayName} turn` : `${P2.displayName} turn`}
                 </p>
             )
         }
         return (
-            <p className="display-victory">
+            <p className={width > 500 ? "display-victory" : "mobile-display-victory"}>
                 {P1.isWinner ? `${P1.displayName} wins!!` : `${P2.displayName} wins!!`}
             </p>
         )
@@ -348,13 +335,13 @@ export default function Battle({ gamemode, difficulty }) {
 
     //Possible instructions for the player or both parties.
     const displayInstruction = () => {
-        if (winner) return (<h2>{'Game ended'}</h2>);
-        if ((P1.isHuman || P2.isHuman) && start) return (<h2>{'Destroy the enemy\'s ships'}</h2>)
-        if ((P1.isHuman || P2.isHuman) && !start) return (<h2>{'Place the ships'}</h2>)
+        if (winner) return (<span>{'Game ended'}</span>);
+        if ((P1.isHuman || P2.isHuman) && start) return (<span>{'Destroy the enemy\'s ships'}</span>)
+        if ((P1.isHuman || P2.isHuman) && !start) return (<span>{'Place the ships'}</span>)
         if (gamemode.value == 2 && !start) {
-            return (<h2>{'Start the battle'}</h2>)
+            return (<span>{'Start the battle'}</span>)
         }
-        return (<h2>{'Get some popcorn'}</h2>)
+        return (<span>{'Get some popcorn'}</span>)
     }
 
     //Buttons for gameboard property mutation
@@ -391,6 +378,7 @@ export default function Battle({ gamemode, difficulty }) {
 
                 </button>
                 <button
+                    id="outcome-visibility-button"
                     onClick={handleVisibilityButton}
                 >
                     {outcomesVisibility ? <i className="fas fa-eye"></i> : <i class="fas fa-eye-slash"></i>}
@@ -488,10 +476,9 @@ export default function Battle({ gamemode, difficulty }) {
             //index 0 refers to player turn, index 1 refers whether player is human
             if (!current.isHuman) {
                 await attackDelay(150);
+                return;
             }
-            if (current.isHuman) {
-                startHumanAttack();
-            }
+            startHumanAttack();
             return;
         }
 
@@ -517,9 +504,10 @@ export default function Battle({ gamemode, difficulty }) {
                 </div>
                 {displayUpperButtons()}
             </div>
+            {(P1 !== null || P2 !== null) && width <= 500 ? displayTurnOrWinner() : null}
             <div id="main-battle">
                 {canvasContainer(cv1Ref, SIZE, "cv1", P1)}
-                {P1 !== null || P2 !== null ? displayTurnOrWinner() : null}
+                {(P1 !== null || P2 !== null) && width > 500 ? displayTurnOrWinner() : null}
                 {canvasContainer(cv2Ref, SIZE, "cv2", P2)}
             </div>
             <div id="Outcomes">

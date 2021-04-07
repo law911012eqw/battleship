@@ -37,15 +37,15 @@ export default function Outcomes({
                     )
                     break;
             }
+            if (outcomesArr < 5) {
+                const newArr = outcomesArr.slice(1);
+                setOutcomesArr(newArr);
+            }
             console.log('well?');
         }
         addingListInArr();
     }, [shipNum, currentPlayer]);
     const outcomesInListFormat = () => {
-        if (outcomesArr < 5) {
-            // setOutcomesArr(outcomesArr.slice(1));
-            // return;
-        }
         outcomesArr.map(txt => {
             return (
                 <p>
