@@ -1,23 +1,20 @@
 import Player from './player'; //arguments = (initialTurn,isHuman,difficulty -> 1 for easy and 2 for hard, otherwise null if player)
 
-//Global variables 
-const MAX = 10;
-
 //Initial creation of player objects
-export let Player1 = Player(true, true, 1, MAX);;
-export let Player2 = Player(false, false, 1, MAX);
+export let Player1 = Player(true, true, 1, 1);
+export let Player2 = Player(false, false, 1, 2);
 
 //Set the gamemode including the AI difficulty
 export async function setGameType(gamemode, p1diff, p2diff){
     if (gamemode == 0) {
-        Player1 = Player(true, true, null, MAX);
-        Player2 = Player(false, true, null, MAX);
+        Player1 = Player(true, true, null, 1);
+        Player2 = Player(false, true, null, 2);
     } else if (gamemode == 1) {
-        Player1 = Player(true, true, null, MAX);
-        Player2 = Player(false, false, p2diff, MAX);
+        Player1 = Player(true, true, null, 1);
+        Player2 = Player(false, false, p2diff, 2);
     } else {
-        Player1 = Player(true, false, p1diff, MAX);
-        Player2 = Player(false, false, p2diff, MAX);
+        Player1 = Player(true, false, p1diff, 1);
+        Player2 = Player(false, false, p2diff, 2);
     }
     namingBothParties(Player1, Player2);
 }

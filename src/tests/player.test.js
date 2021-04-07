@@ -7,16 +7,16 @@ const toggleTurnForBothPlayers = (p1, p2) => {
 }
 
 test('Toggle players\' turn after an attack', () => {
-    const Human = Player(true, true, null, 10);
-    const AI = Player(false, false, 1, 10);
+    const Human = Player(true, true, null, 1);
+    const AI = Player(false, false, 1, 2);
     toggleTurnForBothPlayers(Human, AI);
     toggleTurnForBothPlayers(Human, AI);
     expect(Human.turn).toEqual(true);
 })
 
 test('Alternate attack between parties until one loses the game', () => {
-    const AI = Player(true, false, 1, 10);
-    const AI2 = Player(false, false, 1, 10);
+    const AI = Player(true, false, 1, 1);
+    const AI2 = Player(false, false, 1, 2);
     while (AI.gameboard.getCurrentTotalShips() !== 0 || AI2.gameboard.getCurrentTotalShips() !== 0) {
         toggleTurnForBothPlayers(AI, AI2);
         //console.log(AI.gameboard.currentTotalShips, AI2.gameboard.currentTotalShips);

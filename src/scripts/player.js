@@ -1,8 +1,9 @@
 import Gameboard from './gameboard';
 import kingsMove from '../algorithms/kings_move';
-export default function Player(initialTurn, player, difficulty, size) {
+export default function Player(initialTurn, player, difficulty, num) {
     let turn = initialTurn;
     const isHuman = player; //Purpose: to avoid configure the wrong subject
+    const playerNum = num;
     const displayName = isHuman ? 'Player' : 'AI'; //To identify which party is which
     let isWinner = false; //Determine the winner
 
@@ -11,7 +12,7 @@ export default function Player(initialTurn, player, difficulty, size) {
     const randomNum = (n) => {
         return Math.floor(Math.random() * n);
     }
-    const gameboard = Gameboard(size);
+    const gameboard = Gameboard();
 
     //Use to iterate coordinates to be used as a legal attack for AI
     const randomPlays = (max) => {
@@ -28,9 +29,9 @@ export default function Player(initialTurn, player, difficulty, size) {
         return [x, y];
     }
     //array of legal attacks - used by an AI
-    let aiLegalAtks = randomPlays(size);
+    let aiLegalAtks = randomPlays(10);
     const refillLegalAtks = () => {
-        return randomPlays(size);
+        return randomPlays(10);
     }
 
     const toggleLegality = (x, y) => {
@@ -46,7 +47,7 @@ export default function Player(initialTurn, player, difficulty, size) {
 
         //takes and removes an element using a random index
         //DUMB AI RANDOM ATTACK ALGORITHM
-        console.log(difficulty);
+        console.log(initialTurn, player, difficulty, num);
         if(AILEVEL == 1 && moves.length !== 0){
             const move = moves.splice(randomNum(moves.length - 1), 1);
             return [].concat(...move);
@@ -73,6 +74,7 @@ export default function Player(initialTurn, player, difficulty, size) {
         isHuman,
         displayName,
         toggleLegality,
-        refillLegalAtks
+        refillLegalAtks,
+        playerNum
     }
 }

@@ -133,9 +133,6 @@ select {
 }
 
 /*** Instructions Wrapper ***/
-#instructions-parent-container{
-  text-align: center;
-}
 #instructions-wrapper{
   display: inline-block;
   text-align: center;
@@ -146,6 +143,7 @@ select {
   background: rgb(96, 171, 236);
   width: max-content;
   padding: 0 25px;
+  margin-right: 38px;
 }
 #instructions-wrapper > h2{
   color: rgb(7,67,114);
@@ -158,6 +156,8 @@ select {
 #upper-container{
   display: flex;
   justify-content: space-between;
+  padding-top: 16px;
+  margin-bottom: 20px;
 }
 
 /*** Return to Menu SECTION ***/
@@ -177,7 +177,8 @@ select {
 #upper-button-container{
   display: flex;
   flex-flow: row;
-  margin: 6px;
+  margin: 0 6px;
+  margin-bottom: 10px;
 }
 #upper-button-container > button{
   border-top: 4px solid rgb(116, 184, 243);
@@ -202,6 +203,17 @@ select {
   flex-direction: row;
   justify-content: space-between;
 }
+.display-turn{
+  align-self: center;
+  animation: alive 1s infinite;
+  margin-bottom: 30px;
+  font-size: clamp(0.9rem, 1.6vw, 2.2rem);
+}
+@keyframes alive{
+  50%{
+    transform: scale(1.5);
+  }
+}
 .base-container{
   display: flex;
   flex-direction: row;
@@ -223,4 +235,9 @@ select {
 .in-game-btn:hover{
   background: rgb(66, 152, 226);
   border: 3px inset rgb(144, 199, 247);
+}
+
+/***OUTCOMES SECTION***/
+#Outcomes{
+  height: 20vh;
 }

@@ -9,8 +9,6 @@ import { setGameType } from '../scripts/main';
 export default function Menu() {
     const [gamemode, setGamemode] = useState({ value: '0' }); //0 = both AI, 1 = Player vs AI, 2 = PvP
     const [difficulty, setDifficulty] = useState({ value: '1', valA: '1', valB: '1' });
-    const [mark, setMark] = useState(null);
-    const [piece, setPiece] = useState(null);
     return (
         <Router>
             <NavigateSwitch
@@ -18,10 +16,6 @@ export default function Menu() {
                 setGamemode={setGamemode}
                 difficulty={difficulty}
                 setDifficulty={setDifficulty}
-                mark={mark}
-                setMark={setMark}
-                piece={piece}
-                setPiece={setPiece}
             />
         </Router>
     )
@@ -31,9 +25,7 @@ function NavigateSwitch({
     gamemode,
     setGamemode,
     difficulty,
-    setDifficulty,
-    setMark,
-    setPiece }) {
+    setDifficulty}) {
     return (
         <Switch>
             <Route exact path="/battleship/"
@@ -45,7 +37,7 @@ function NavigateSwitch({
                 />} />
             <Route exact path="/battleship/battle"
                 children={<Battle gamemode={gamemode} difficulty={difficulty} />} />
-            <Route exact path="/battleship/themes" children={<Themes setMark={setMark} setPiece={setPiece} />} />
+            <Route exact path="/battleship/themes" children={<Themes />} />
         </Switch>
     )
 }

@@ -5,25 +5,28 @@ import Outcomes from './Outcomes';
 import { Player1, Player2, autoBattle, randomize, playerAttack, resetGame } from '../scripts/main'
 
 export default function Battle({ gamemode, difficulty }) {
+    //STATES
     //viewport width used for canvas size
     const width = window.innerWidth;
 
     //Player factory function as a state
     const [P1,] = useState(Player1);
     const [P2,] = useState(Player2);
+    const [outcomesArr, setOutcomesArr] = useState([]);
 
     //Used to manually start and end the game
     const [winner, setWinner] = useState(null);
     const [start, setStart] = useState(false);
+    const [outcomesVisibility, setOutcomesVisibility] = useState(true);
 
     //Set the current player
-    const [currentTurn, setCurrentTurn] = useState([Player1.turn, Player1.isHuman]);
+    const [current, setCurrent] = useState({ turn: 1, isHuman: Player1.turn });
 
     //Used as a fake count to trigger an associated useEffect as a dependency value
     const [fakeCount, setFakeCount] = useState(0);
 
     //Immutable and conditionally-based variable
-    const SIZE = (width >= 800) ? width * .22 : width * .30;
+    const SIZE = (width >= 800) ? width * .28 : width * .35;
 
     //Canvas stuff
     const cv1Ref = useRef(null);
@@ -31,10 +34,13 @@ export default function Battle({ gamemode, difficulty }) {
 
     const [toggleP1ShipVisibility, setToggleP1ShipVisibility] = useState(true);
     const [toggleP2ShipVisibility, setToggleP2ShipVisibility] = useState(true);
+    const [allowOutcomes, setAllowOutcomes] = useState(null);
+    const [coordinate, setCoordinate] = useState(null);
+    const [currentShips, setCurrentShips] = useState(null);
 
     //Triggered after a click on start button
     const handleStartButton = () => {
-        if (!start && gamemode.value === 0){
+        if (!start && gamemode.value === 0) {
             setToggleP1ShipVisibility(false);
             setToggleP2ShipVisibility(false);
         }
@@ -42,6 +48,10 @@ export default function Battle({ gamemode, difficulty }) {
             setStart(!start);
             resetStates();
         }
+    }
+
+    const handleVisibilityButton = () => {
+        setOutcomesVisibility(!outcomesVisibility);
     }
 
     //Reset all the propety of palyer and gameboard functions to initial state
@@ -58,7 +68,12 @@ export default function Battle({ gamemode, difficulty }) {
     const resetStates = () => {
         setStart(!start);
         setWinner(false);
-        setCurrentTurn([P1.turn, P1.isHuman]);
+        setCurrent({
+            turn: 1,
+            isHuman: P1.isHuman
+        })
+        setOutcomesArr([]);
+        setAllowOutcomes(null);
     }
 
     //Reset all states to initial value
@@ -69,12 +84,12 @@ export default function Battle({ gamemode, difficulty }) {
         const ctx2 = cv2.getContext('2d');
         if (start) {
             await setPlayerAsStates();
-            setCurrentTurn([P1.turn, P1.isHuman]);
             drawBoard(ctx1, SIZE, P1);
             drawBoard(ctx2, SIZE, P2);
-            console.log(currentTurn);
             resetStates();
-            console.log(currentTurn);
+            console.log(Player1.aiLegalAtks);
+            console.log(Player2.AILEVEL);
+            console.log(difficulty);
         }
     }
 
@@ -97,6 +112,62 @@ export default function Battle({ gamemode, difficulty }) {
         } else {
             setToggleP2ShipVisibility(!toggleP2ShipVisibility);
         }
+    }
+
+    const enablePrintOutcomes = () => {
+        if (allowOutcomes === 0) {
+            return (
+                <div className="outcomes-victory">
+                    <Outcomes
+                        currentPlayer={current.turn === 1 ? P1.displayName : P2.displayName}
+                        shipNum={current.turn === 1 ? P1.gameboard.getCurrentTotalShips() : P2.gameboard.getCurrentTotalShips()}
+                        categoryNum={allowOutcomes}
+                        coordinate={null}
+                        outcomesArr={outcomesArr}
+                        setOutcomesArr={setOutcomesArr}
+                    />
+                </div>
+            )
+        } else if (allowOutcomes === 1) {
+            return (
+                <div className="outcomes-information">
+                    <Outcomes
+                        currentPlayer={current.turn === 1 ? P1.displayName : P2.displayName}
+                        shipNum={current.turn === 1 ? P1.gameboard.getCurrentTotalShips() : P2.gameboard.getCurrentTotalShips()}
+                        categoryNum={allowOutcomes}
+                        coordinate={null}
+                        outcomesArr={outcomesArr}
+                        setOutcomesArr={setOutcomesArr}
+                    />
+                </div>
+            )
+        } else if (allowOutcomes === 2) {
+            return (
+                <div className="outcomes-action">
+                    <Outcomes
+                        currentPlayer={current.turn  === 1 ? P1.displayName : P2.displayName}
+                        shipNum={current.turn  === 1 ? currentShips : currentShips}
+                        categoryNum={allowOutcomes}
+                        coordinate={coordinate}
+                        outcomesArr={outcomesArr}
+                        setOutcomesArr={setOutcomesArr}
+                    />
+                </div>
+            )
+        }
+        console.log(outcomesArr);
+        return (
+            <div className="outcomes-action">
+                <Outcomes
+                    currentPlayer={current.turn === 1 ? P1.displayName : P2.displayName}
+                    shipNum={current.turn === 1 ? currentShips : currentShips}
+                    categoryNum={allowOutcomes}
+                    coordinate={coordinate}
+                    outcomesArr={outcomesArr}
+                    setOutcomesArr={setOutcomesArr}
+                />
+            </div>
+        )
     }
     //draw tiles for the board
     const drawSquare = (x, y, ctx, sz) => {
@@ -126,11 +197,11 @@ export default function Battle({ gamemode, difficulty }) {
         board.forEach((row, r) => {
             row.forEach((col, c) => {
                 //Auto visualize ships in AI board
-                if(!toggleP1ShipVisibility && player.turn === true) {
+                if (!toggleP1ShipVisibility && player.turn === true) {
                     drawSquare(c, r, ctx, SQR);
                     return;
                 }
-                if(!toggleP2ShipVisibility && player.turn === false) {
+                if (!toggleP2ShipVisibility && player.turn === false) {
                     drawSquare(c, r, ctx, SQR);
                     return;
                 }
@@ -160,15 +231,19 @@ export default function Battle({ gamemode, difficulty }) {
     const simulateBattleship = (ctx, sz, player) => {
         const SQR = sz * ((100 / 10) * 0.01);
         const board = player.gameboard.board;
-        //const occupiedPos = player.gameboard.getOccupiedPos();
         const recentAttackedPos = player.gameboard.getRecentCoordinate();
         board.forEach((row, r) => {
             row.forEach((col, c) => { //0 = unattacked, 1 = recency(by 1), 2 = already marked
                 if (col[1] === 1) {
+                    setCoordinate(col[0]);
                     if (recentAttackedPos.x === r && recentAttackedPos.y === c) {
                         drawX(c + 1, r + 1, ctx, SQR, true);
                         drawCircle(c + 1, r + 1, ctx, SQR, true);
+                        setAllowOutcomes(2);
+                        setCurrentShips(player.gameboard.getCurrentTotalShips());
+                        compareShipsRemainingFromRecentAttack(currentShips, player);
                     } else {
+                        setAllowOutcomes(3);
                         drawX(c + 1, r + 1, ctx, SQR, false);
                         drawCircle(c + 1, r + 1, ctx, SQR, false);
                     }
@@ -178,6 +253,11 @@ export default function Battle({ gamemode, difficulty }) {
         })
     }
 
+    const compareShipsRemainingFromRecentAttack = (arr, p) => {
+        if (arr === p.gameboard.getCurrentTotalShips()) {
+            setAllowOutcomes(1);
+        }
+    }
     //Draw x on the board to indicate coordinate attack unavailability to the user
     const drawX = (x, y, ctx, sz, shipHit) => {
         ctx.beginPath();
@@ -310,8 +390,10 @@ export default function Battle({ gamemode, difficulty }) {
                     {!start ? <i className="fas fa-play"></i> : <i className="fas fa-redo-alt"></i>}
 
                 </button>
-                <button>
-                    <i className="fas fa-eye"></i>
+                <button
+                    onClick={handleVisibilityButton}
+                >
+                    {outcomesVisibility ? <i className="fas fa-eye"></i> : <i class="fas fa-eye-slash"></i>}
                 </button>
             </div>
         )
@@ -334,6 +416,7 @@ export default function Battle({ gamemode, difficulty }) {
         const ctx1 = cv1.getContext('2d');
         const ctx2 = cv2.getContext('2d');
         const sz = SIZE * 0.1;
+        setAllowOutcomes(null);
 
         //Feature availability: to track the current coordinates demanded with mouse event
         const getCursorPosition = (attacker, defender, cvs, event) => {
@@ -352,7 +435,10 @@ export default function Battle({ gamemode, difficulty }) {
                         return cv.removeEventListener('mousedown', handler);
                     }
                     simulateBattleship(ctx, SIZE, defender);
-                    setCurrentTurn([defender.turn, defender.isHuman]);
+                    setCurrent({
+                        turn: defender.playerNum,
+                        isHuman: defender.isHuman
+                    });
                     cv.removeEventListener('mousedown', handler);
                 })
             }
@@ -369,12 +455,18 @@ export default function Battle({ gamemode, difficulty }) {
             if (P1.turn) {
                 autoBattle(P1, P2);
                 simulateBattleship(ctx2, SIZE, P2);
-                setCurrentTurn([P2.turn, P2.isHuman]);
+                setCurrent({
+                    turn: P2.playerNum,
+                    isHuman: P2.isHuman
+                });
                 return;
             } else if (P2.turn) {
                 autoBattle(P1, P2);
                 simulateBattleship(ctx1, SIZE, P1);
-                setCurrentTurn([P1.turn, P1.isHuman]);
+                setCurrent({
+                    turn: P1.playerNum,
+                    isHuman: P1.isHuman
+                });
             }
         }
 
@@ -390,13 +482,14 @@ export default function Battle({ gamemode, difficulty }) {
         async function checkCurrentPlayerTurn() {
             if (P1.isWinner || P2.isWinner) {
                 setWinner(true);
+                setAllowOutcomes(0);
                 return;
             }
             //index 0 refers to player turn, index 1 refers whether player is human
-            if (!currentTurn[1] && currentTurn[0]) {
-                await attackDelay(50);
+            if (!current.isHuman) {
+                await attackDelay(150);
             }
-            if (currentTurn[1] && currentTurn[0]) {
+            if (current.isHuman) {
                 startHumanAttack();
             }
             return;
@@ -408,27 +501,29 @@ export default function Battle({ gamemode, difficulty }) {
             }
         }
         startGame();
-        console.log(start, 'Is current player human: ' + currentTurn[1]);
+        console.log(current);
+        console.log('Is current player human: ' + current.isHuman);
         return (() => {
             clearTimeout(attackDelay);
         })
-    }, [currentTurn, start, fakeCount])
+    }, [current, start, fakeCount])
 
     return (
         <div id="Battle">
             <div id="upper-container">
                 <ReturnToMenu />
-                {displayUpperButtons()}
-            </div>
-            <div id="instructions-parent-container">
                 <div id="instructions-wrapper">
                     {displayInstruction()}
                 </div>
+                {displayUpperButtons()}
             </div>
             <div id="main-battle">
                 {canvasContainer(cv1Ref, SIZE, "cv1", P1)}
                 {P1 !== null || P2 !== null ? displayTurnOrWinner() : null}
                 {canvasContainer(cv2Ref, SIZE, "cv2", P2)}
+            </div>
+            <div id="Outcomes">
+                {allowOutcomes !== null && outcomesVisibility ? enablePrintOutcomes() : null}
             </div>
         </div>
     )
