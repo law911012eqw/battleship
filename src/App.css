@@ -215,6 +215,8 @@ select {
   align-self: center;
   animation: alive 1s infinite;
   margin-bottom: 30px;
+  width: 200px;
+  text-align: center;
   font-size: clamp(0.7rem, 1.2vw, 2.2rem);
 }
 @keyframes alive{
@@ -225,7 +227,6 @@ select {
 .base-container{
   display: flex;
   flex-direction: row;
-  /* justify-content: center; */
 }
 
 /*** Player ships status ***/

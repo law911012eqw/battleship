@@ -1,5 +1,6 @@
 import Gameboard from './gameboard';
-import kingsMove from '../algorithms/kings_move';
+import huntTarget from '../algorithms/hunt_target';
+
 export default function Player(initialTurn, player, difficulty, num) {
     let turn = initialTurn;
     const isHuman = player; //Purpose: to avoid configure the wrong subject
@@ -13,6 +14,8 @@ export default function Player(initialTurn, player, difficulty, num) {
         return Math.floor(Math.random() * n);
     }
     const gameboard = Gameboard();
+    const opponentOccupiedPosLeft = 17;
+    const opponentShipsLeft = 5;
 
     //Use to iterate coordinates to be used as a legal attack for AI
     const randomPlays = (max) => {
@@ -30,6 +33,15 @@ export default function Player(initialTurn, player, difficulty, num) {
     }
     //array of legal attacks - used by an AI
     let aiLegalAtks = randomPlays(10);
+    let recentSunk = false;
+
+    let vertical = [1, -1];
+    let horizontal = [10, -10];
+
+    //Special variable for Player(AI) with higher difficulty
+    let firstHuntAtk = null; //
+    let recentDirectionalAtk; //either vertical or horizontal (v/h)
+
     const refillLegalAtks = () => {
         return randomPlays(10);
     }
@@ -42,23 +54,26 @@ export default function Player(initialTurn, player, difficulty, num) {
     //AI move algorithm
     const aiMove = (moves) => {
         //These two are considered previous values after the specification of move coordinate
-        const prevPosNum = gameboard.getOccupiedPos().length;
-        const prevShipsLeft = gameboard.getCurrentTotalShips();
 
         //takes and removes an element using a random index
         //DUMB AI RANDOM ATTACK ALGORITHM
-        console.log(initialTurn, player, difficulty, num);
-        if(AILEVEL == 1 && moves.length !== 0){
+        if (moves.length !== 0) {
+            if (AILEVEL == 2) {
+                if (vertical.length === 0) { vertical  = [1, -1]; }
+                if (horizontal.length === 0) { horizontal = [10, -10]; }
+                return huntTarget(
+                    gameboard,
+                    moves,
+                    vertical,
+                    horizontal, 
+                    firstHuntAtk,
+                    recentDirectionalAtk,
+                    opponentOccupiedPosLeft,
+                    recentSunk
+                    );
+            }
             const move = moves.splice(randomNum(moves.length - 1), 1);
             return [].concat(...move);
-        } else if (AILEVEL == 2 && moves.length !== 0){
-            const up = [0, -1];
-            const down = [0, +1];
-            const right = [+1, 0];
-            const left = [-1, 0];
-            let direction = [up, down, right, left];
-            if (direction.length === 0) {direction = direction = [up, down, right, left]; }
-            return kingsMove(gameboard, prevPosNum, prevShipsLeft, moves, direction);
         }
     }
 
@@ -69,12 +84,16 @@ export default function Player(initialTurn, player, difficulty, num) {
         togglePlayerTurn,
         aiMove,
         aiLegalAtks,
+        recentSunk,
+        opponentOccupiedPosLeft,
         selectedAtk,
         isWinner,
         isHuman,
         displayName,
         toggleLegality,
         refillLegalAtks,
-        playerNum
+        playerNum,
+        getAiLegalAtks() { return aiLegalAtks; },
+        setAiLegalAtks(arr) { aiLegalAtks = arr; }
     }
 }

@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 
 export default function Outcomes({
+    p,
     currentPlayer,
-    shipNum,
     categoryNum,
     coordinate,
     outcomesArr,
@@ -10,15 +10,11 @@ export default function Outcomes({
 
     useEffect(() => {
         const addingListInArr = () => {
+            if(categoryNum === null) return;
             switch (categoryNum) {
                 case 0:
                     outcomesArr.push(
                         `${currentPlayer} won the battleship!`
-                    )
-                    break;
-                case 1:
-                    outcomesArr.push(
-                        `${currentPlayer} only have ${shipNum} ${shipNum !== 1 ? 'ships' : 'ship'} left.`
                     )
                     break;
                 case 2:
@@ -32,31 +28,26 @@ export default function Outcomes({
                     )
                     break;
                 default:
-                    outcomesArr.push(
-                        'The game has started...'
-                    )
                     break;
             }
-            if (outcomesArr < 5) {
-                const newArr = outcomesArr.slice(1);
-                setOutcomesArr(newArr);
-            }
-            console.log('well?');
+        }
+        if (outcomesArr.length > 5) {
+            const newArr = outcomesArr.slice(1);
+            setOutcomesArr(newArr);
         }
         addingListInArr();
-    }, [shipNum, currentPlayer]);
-    const outcomesInListFormat = () => {
-        outcomesArr.map(txt => {
+        console.log(outcomesArr);
+    }, [p, currentPlayer, outcomesArr, coordinate]);
+    const outcomesInListFormat =  outcomesArr.map((txt, id)=> {
             return (
-                <p>
+                <li key={id}>
                     {txt}
-                </p>
-            )
+                </li>
+            );
         })
-    }
     return (
-        <div>
-            {outcomesInListFormat()}
-        </div>
+        <ul id="Outcomes">
+            {outcomesInListFormat}
+        </ul>
     )
 }

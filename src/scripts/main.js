@@ -9,14 +9,19 @@ export async function setGameType(gamemode, p1diff, p2diff){
     if (gamemode == 0) {
         Player1 = Player(true, true, null, 1);
         Player2 = Player(false, true, null, 2);
+        Player1.displayName = 'Player 1';
+        Player2.displayName = 'Player 2';
     } else if (gamemode == 1) {
         Player1 = Player(true, true, null, 1);
         Player2 = Player(false, false, p2diff, 2);
+        Player1.displayName = 'Player';
+        Player2.displayName = 'AI';
     } else {
         Player1 = Player(true, false, p1diff, 1);
         Player2 = Player(false, false, p2diff, 2);
+        Player1.displayName = 'AI 1';
+        Player2.displayName = 'AI 2';
     }
-    namingBothParties(Player1, Player2);
 }
 
 //toggle turns
@@ -25,19 +30,6 @@ export const toggleTurnForBothPlayers = (p1, p2) => {
     p2.turn = p2.togglePlayerTurn(p2.turn);
 }
 
-//used to display to check if the player is an AI or not
-const namingBothParties = (Player1, Player2) => {
-    if (Player1.isHuman === true && Player2.isHuman === true) {
-        Player1.displayName = 'Player 1';
-        Player2.displayName = 'Player 2';
-    } else if (Player1.isHuman === false && Player2.isHuman === false) {
-        Player1.displayName = 'AI 1';
-        Player2.displayName = 'AI 2';
-    } else {
-        Player1.displayName = 'Player';
-        Player2.displayName = 'AI';
-    }
-}
 
 const checkWinner = (P1, P2) => {
     if (P1.gameboard.getOccupiedPos().length == 0) {
@@ -49,22 +41,29 @@ const checkWinner = (P1, P2) => {
 
 //Auto function for AIvsAI gamemode
 export const autoBattle = (P1, P2) => {
-    if (P1.turn) {
-        const atk = P1.aiMove(P1.aiLegalAtks);
-        const ships = P2.gameboard.shipsOnTheBoard;
-        P2.gameboard.receiveAttack(atk[0], atk[1], ships);
-    } else if (P2.turn) {
-        const atk = P2.aiMove(P2.aiLegalAtks);
-        const ships = P1.gameboard.shipsOnTheBoard;
-        P1.gameboard.receiveAttack(atk[0], atk[1], ships);
-    }
+    AIAttack(P1, P2);
+    AIAttack(P2,P1);
     checkWinner(P1, P2);
     toggleTurnForBothPlayers(P1, P2);
 }
 
+const AIAttack = (attacker, defender) => {
+    if (attacker.turn) {
+        const prevShipsLeft = defender.gameboard.getCurrentTotalShips();
+        const atk = attacker.aiMove(attacker.aiLegalAtks);
+        const ships = defender.gameboard.shipsOnTheBoard;
+        defender.gameboard.receiveAttack(atk[0], atk[1], ships);
+        attacker.opponentOccupiedPosLeft = defender.gameboard.getOccupiedPos();
+        if(prevShipsLeft !== defender.gameboard.getCurrentTotalShips()){
+            attacker.recentSunk = true;
+        }
+    } 
+}
+
 //Attack the ships of the other party
 export const playerAttack = (attacker, defender, x, y) => {
-    if(!attacker.aiLegalAtks.some(o => o[0] === x && o[1] === y)) return true;
+    const shots = attacker.aiLegalAtks;
+    if(!shots.some(o => o[0] === x && o[1] === y)) return true;
     const ships = defender.gameboard.shipsOnTheBoard;
     attacker.toggleLegality(x,y);
     defender.gameboard.receiveAttack(y, x, ships);
@@ -83,5 +82,6 @@ export const resetGame = (player) => {
     randomize(player);
     if (player.isWinner) { player.isWinner = false; }
     player.gameboard.resetBoard();
-    player.aiLegalAtks = player.refillLegalAtks();
+    const newLegalShots =  player.refillLegalAtks()
+    player.aiLegalAtks = newLegalShots;
 }

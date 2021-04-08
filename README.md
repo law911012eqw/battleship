@@ -19,15 +19,15 @@ There are two gamemodes: Player vs Player (PvP) and Player vs AI with an impleme
 
 ### Issues to fix
 **Minor**:
-* Prevent the first player from attacking the other board after restarting
-* Restart button is breaking the game functionality
+* The irremovable event listener breaks the game. Causes: There's no clean up functionality after restarting the game through clicking the restart button.
 
 ### TODOS
 4/4/20
 - [X] Implement PvP toggle visibility functionality so players cannot see each other's ships
 - [X] Created randomzie ships functionality as the main feature to place ships
-- [ ] Design outcome in a list format during the game
+- [X] Design outcome in a list format during the game
 - [ ] Create secondary difficulty mainly to polish AI move ruleset
+- [ ] The clean up function for player is not accessible after clicking the restart button.
 
 ## Available Scripts
 
@@ -69,4 +69,11 @@ If you aren’t satisfied with the build tool and configuration choices, you can
 Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
 
 You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+
+
+If random attack shot first square in a ship
+Switch to target mode where 4 square is the required possible shots
+if up succesfully attacked the right square (up and down becomes the possible target)
+otherwise, it would be (left or right)
+If the ship dies then it should switch to hunt mode.
 

@@ -44,8 +44,8 @@ export default function Gameboard() {
         this.y = y;
     }
 
-    const missedAtks = [];
-    let recentAtk = null;
+    let missedAtks = [];
+   
     //assign coordinates to a ship
     const assignCoordinates = (len, bh) => {
         let arr = [];
@@ -148,7 +148,6 @@ export default function Gameboard() {
             if (pos.x === x && pos.y === y) {
                 //remove occupied position using a specified coordinates chosen by user
                 const hit = arr.splice(i, 1);
-                console.log(hit);
                 recentCoordinateAttackedShip = hit[0];
                 return [].concat(...hit);
             }
@@ -160,20 +159,14 @@ export default function Gameboard() {
     const getCurrentTotalShips = () => { return currentTotalShips; }
     const getRecentCoordinate = () => { return recentCoordinateAttackedShip; }
     return {
-        height,
-        width,
-        randomNumGen,
         shipsOnTheBoard,
         addShipsToTheBoard,
         board,
         resetArray,
         resetBoard,
-        missedAtks,
-        recentAtk,
         currentTotalShips,
-        validateCoordinates,
+        missedAtks,
         receiveAttack,
-        isShipGotHit,
         occupiedPos,
         getRecentCoordinate,
         getOccupiedPos,
