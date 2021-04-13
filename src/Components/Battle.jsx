@@ -1,8 +1,10 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 
 import ReturnToMenu from './ReturnToMenu';
 import Outcomes from './Outcomes';
 import { Player1, Player2, autoBattle, randomize, playerAttack, resetGame, toggleTurnForBothPlayers } from '../scripts/main'
+
+import ListenerManager from '../scripts/listener_manager'
 
 export default function Battle({ gamemode, difficulty }) {
     //STATES
@@ -15,10 +17,10 @@ export default function Battle({ gamemode, difficulty }) {
     const [outcomesArr, setOutcomesArr] = useState([]);
 
     //Used to manually start and end the game
-    const [winner, setWinner] = useState(null);
+    const [winner, setWinner] = useState(false);
     const [start, setStart] = useState(false);
     const [outcomesVisibility, setOutcomesVisibility] = useState(false);
-    
+
     //Set the current player
     const [current, setCurrent] = useState({ turn: 1, isHuman: Player1.turn });
 
@@ -29,7 +31,7 @@ export default function Battle({ gamemode, difficulty }) {
     const [fakeCount, setFakeCount] = useState(0);
 
     //Event listeners
-    const clickHandler = useCallback(event => { console.log(event)}, [])
+    const LM = new ListenerManager();
 
     //Canvas stuff
     const cv1Ref = useRef(null);
@@ -46,20 +48,14 @@ export default function Battle({ gamemode, difficulty }) {
             setToggleP1ShipVisibility(false);
             setToggleP2ShipVisibility(false);
         }
-        if (!start) { 
-            setStart(true); 
-            setWinner(false);
+        if (!start) {
+            setStart(!start);
         }
     }
 
     const handleVisibilityButton = () => {
         setOutcomesVisibility(!outcomesVisibility);
         setAllowOutcomes(false);
-    }
-
-    const cleanUpEventListener = (cv1, cv2) => {
-        cv1.removeEventListener('mousedown' ,clickHandler);
-        cv2.removeEventListener('mousedown' ,clickHandler);
     }
 
     //Reset all the propety of palyer and gameboard functions to initial state
@@ -75,12 +71,14 @@ export default function Battle({ gamemode, difficulty }) {
 
     const resetStates = () => {
         setStart(!start);
+        setWinner(false);
         setOutcomesArr(['The game has started...']);
         setAllowOutcomes(null);
         setCurrent({
             turn: 1,
             isHuman: P1.isHuman
         })
+        LM.removeAll();
     }
 
     //Reset all states to initial value
@@ -99,7 +97,6 @@ export default function Battle({ gamemode, difficulty }) {
             drawBoard(ctx1, SIZE, P1);
             drawBoard(ctx2, SIZE, P2);
             resetStates();
-            cleanUpEventListener(cv1, cv2);
         }
     }
 
@@ -399,21 +396,25 @@ export default function Battle({ gamemode, difficulty }) {
         }
 
         const humanAttack = (attacker, defender, cv, ctx) => {
-            if (attacker.turn) {
-                cv.addEventListener('mousedown', clickHandler);
-                const attackedPosition = getCursorPosition(attacker, defender, cv, clickHandler);
+            function handler(e) {
+                const attackedPosition = getCursorPosition(attacker, defender, cv, e);
                 if (attackedPosition) {
                     setFakeCount(fakeCount + 1);
-                    return cv.removeEventListener('mousedown', clickHandler);
+                    cv.removeEventListener('mousedown', handler);
+                    return;
                 }
                 simulateBattleship(ctx, SIZE, defender);
                 setCurrent({
                     turn: defender.playerNum,
                     isHuman: defender.isHuman
                 });
-                cv.removeEventListener('mousedown', clickHandler);
+                cv.removeEventListener('mousedown', handler);
+            }
+            if (attacker.turn && start) {
+                LM.add(cv, 'mousedown', handler);
             }
         }
+
         //Allow the human players to choose a coordinates to attack
         const startHumanAttack = () => {
             //Conditionally apply event listener
@@ -423,15 +424,15 @@ export default function Battle({ gamemode, difficulty }) {
 
         //start the round
         const startAiAttack = () => {
-            if(P1.turn){
-                autoBattle(P1,P2);
+            if (P1.turn) {
+                autoBattle(P1, P2);
                 simulateBattleship(ctx2, SIZE, P2);
                 setCurrent({
                     turn: P2.playerNum,
                     isHuman: P2.isHuman
                 });
             } else if (P2.turn) {
-                autoBattle(P1,P2);
+                autoBattle(P1, P2);
                 simulateBattleship(ctx1, SIZE, P1);
                 setCurrent({
                     turn: P1.playerNum,
@@ -455,7 +456,7 @@ export default function Battle({ gamemode, difficulty }) {
                 return;
             }
             //Check if current player (by turn) is an ai then proceeds
-            if (!current.isHuman) {
+            if (start && !current.isHuman) {
                 await attackDelay(1);
                 return;
             }
@@ -463,8 +464,7 @@ export default function Battle({ gamemode, difficulty }) {
             return;
         }
         const startGame = () => {
-            if (start && !winner) {
-                console.log('asd');
+            if (!winner) {
                 checkCurrentPlayerTurn();
             }
             return;

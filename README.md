@@ -19,15 +19,15 @@ There are two gamemodes: Player vs Player (PvP) and Player vs AI with an impleme
 
 ### Issues to fix
 **Minor**:
-* The irremovable event listener breaks the game. Causes: There's no clean up functionality after restarting the game through clicking the restart button.
+* None at the moment
 
 ### TODOS
 4/4/20
-- [X] Implement PvP toggle visibility functionality so players cannot see each other's ships
-- [X] Created randomzie ships functionality as the main feature to place ships
-- [X] Design outcome in a list format during the game
-- [ ] Create secondary difficulty mainly to polish AI move ruleset
-- [ ] The clean up function for player is not accessible after clicking the restart button.
+- [X] Implement PvP toggle visibility functionality so players cannot see each other's ships.
+- [X] Created randomzie ships functionality as the main feature to place ships.
+- [X] Design outcome in a list format during the game.
+- [ ] Create secondary difficulty mainly to polish AI move ruleset.
+- [X] The clean up function for player is not accessible after clicking the restart button.
 
 ## Available Scripts
 

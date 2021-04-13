@@ -62,7 +62,8 @@ const AIAttack = (attacker, defender) => {
 
 //Attack the ships of the other party
 export const playerAttack = (attacker, defender, x, y) => {
-    const shots = attacker.aiLegalAtks;
+    const shots = attacker.getAiLegalAtks();
+    console.log(shots);
     if(!shots.some(o => o[0] === x && o[1] === y)) return true;
     const ships = defender.gameboard.shipsOnTheBoard;
     attacker.toggleLegality(x,y);
@@ -82,6 +83,6 @@ export const resetGame = (player) => {
     randomize(player);
     if (player.isWinner) { player.isWinner = false; }
     player.gameboard.resetBoard();
-    const newLegalShots =  player.refillLegalAtks()
-    player.aiLegalAtks = newLegalShots;
+    const newLegalShots =  player.refillLegalAtks();
+    player.setAiLegalAtks(newLegalShots);
 }

@@ -143,14 +143,14 @@ select {
   background: rgb(96, 171, 236);
   width: max-content;
   height: max-content;
-  padding: 8px;
+  padding: 13px;
   margin-right: 38px;
 }
 #instructions-wrapper > span{
   color: rgb(7,67,114);
   font-weight: 4;
   text-align: center;
-  font-size: (0.8em, 1.5vw, 2.8rem);
+  font-size: 2em;
 }
 
 /*** Upper Container ***/ 
@@ -166,7 +166,7 @@ select {
   margin: 22px;
   color: rgb(7,67,114);
   cursor: pointer;
-  font-size: clamp(0.6rem, 1.2vw, 2rem);
+  font-size: clamp(0.8rem, 1.2vw, 2rem);
 }
 #Return > i {
   margin-right: 10px
@@ -217,7 +217,7 @@ select {
   margin-bottom: 30px;
   width: 200px;
   text-align: center;
-  font-size: clamp(0.7rem, 1.2vw, 2.2rem);
+  font-size: clamp(0.7rem, 1.6vw, 2.2rem);
 }
 @keyframes alive{
   50%{
@@ -237,7 +237,7 @@ select {
   align-items: center;
 }
 .player-resources-container > p, .player-resources > p{
-  font-size: clamp(0.7rem, 1.3vw, 2rem);
+  font-size: clamp(0.7rem, 1.5vw, 2rem);
 }
 
 /***BUTTON CONTAINERS***/
