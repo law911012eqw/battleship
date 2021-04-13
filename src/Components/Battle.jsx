@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
+import React, { useState, useEffect, useRef} from 'react';
 
 import ReturnToMenu from './ReturnToMenu';
 import Outcomes from './Outcomes';
@@ -10,6 +10,9 @@ export default function Battle({ gamemode, difficulty }) {
     //STATES
     //viewport width used for canvas size
     const width = window.innerWidth;
+
+    //Immutable and conditionally-based variable
+    const SIZE = width < 600 ? width * .60 : width * .20;
 
     //Player factory function as a state
     const [P1,] = useState(Player1);
@@ -23,9 +26,6 @@ export default function Battle({ gamemode, difficulty }) {
 
     //Set the current player
     const [current, setCurrent] = useState({ turn: 1, isHuman: Player1.turn });
-
-    //Immutable and conditionally-based variable
-    const SIZE = width < 600 ? width * .60 : width * .20;
 
     //Used as a fake count to trigger an associated useEffect as a dependency value
     const [fakeCount, setFakeCount] = useState(0);
@@ -48,9 +48,8 @@ export default function Battle({ gamemode, difficulty }) {
             setToggleP1ShipVisibility(false);
             setToggleP2ShipVisibility(false);
         }
-        if (!start) {
-            setStart(!start);
-        }
+        setStart(!start);
+        setOutcomesArr(['The game has started...']);
     }
 
     const handleVisibilityButton = () => {
@@ -72,7 +71,6 @@ export default function Battle({ gamemode, difficulty }) {
     const resetStates = () => {
         setStart(!start);
         setWinner(false);
-        setOutcomesArr(['The game has started...']);
         setAllowOutcomes(null);
         setCurrent({
             turn: 1,
@@ -122,7 +120,6 @@ export default function Battle({ gamemode, difficulty }) {
     }
 
     const enablePrintOutcomes = () => {
-        console.log(allowOutcomes);
         if (allowOutcomes === 0) {
             return (
                 <Outcomes
@@ -457,7 +454,7 @@ export default function Battle({ gamemode, difficulty }) {
             }
             //Check if current player (by turn) is an ai then proceeds
             if (start && !current.isHuman) {
-                await attackDelay(1);
+                await attackDelay(1000);
                 return;
             }
             startHumanAttack();

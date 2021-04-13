@@ -19,7 +19,8 @@ There are two gamemodes: Player vs Player (PvP) and Player vs AI with an impleme
 
 ### Issues to fix
 **Minor**:
-* None at the moment
+* First attack from one of the player is not listed as an outcome.
+* Hard difficulty is yet to be implemented
 
 ### TODOS
 4/4/20
@@ -71,9 +72,10 @@ Instead, it will copy all the configuration files and the transitive dependencie
 You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
 
-If random attack shot first square in a ship
-Switch to target mode where 4 square is the required possible shots
-if up succesfully attacked the right square (up and down becomes the possible target)
-otherwise, it would be (left or right)
+If random attack shot first square in a ship.
+Switch to target mode where 4 square is the required possible shots.
+if up succesfully attacked the right square (up and down becomes the possible target).
+otherwise, it would be left or right.
 If the ship dies then it should switch to hunt mode.
+Repeat steps from line 1 to 4 until victory naturally occurs.
 

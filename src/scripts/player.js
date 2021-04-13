@@ -14,8 +14,7 @@ export default function Player(initialTurn, player, difficulty, num) {
         return Math.floor(Math.random() * n);
     }
     const gameboard = Gameboard();
-    const opponentOccupiedPosLeft = 17;
-    const opponentShipsLeft = 5;
+    let opponentOccupiedPosLeft = 17;
 
     //Use to iterate coordinates to be used as a legal attack for AI
     const randomPlays = (max) => {
@@ -35,12 +34,10 @@ export default function Player(initialTurn, player, difficulty, num) {
     let aiLegalAtks = randomPlays(10);
     let recentSunk = false;
 
-    let vertical = [1, -1];
-    let horizontal = [10, -10];
-
     //Special variable for Player(AI) with higher difficulty
-    let firstHuntAtk = null; //
-    let recentDirectionalAtk; //either vertical or horizontal (v/h)
+    let firstHuntAtk = null; 
+    function setFirstHunt(val) { firstHuntAtk = val; }
+    let isVertical; //either vertical or horizontal (v/h)
 
     const refillLegalAtks = () => {
         return randomPlays(10);
@@ -53,21 +50,13 @@ export default function Player(initialTurn, player, difficulty, num) {
 
     //AI move algorithm
     const aiMove = (moves) => {
-        //These two are considered previous values after the specification of move coordinate
-
-        //takes and removes an element using a random index
-        //DUMB AI RANDOM ATTACK ALGORITHM
         if (moves.length !== 0) {
             if (AILEVEL == 2) {
-                if (vertical.length === 0) { vertical  = [1, -1]; }
-                if (horizontal.length === 0) { horizontal = [10, -10]; }
                 return huntTarget(
-                    gameboard,
                     moves,
-                    vertical,
-                    horizontal, 
                     firstHuntAtk,
-                    recentDirectionalAtk,
+                    setFirstHunt,
+                    isVertical,
                     opponentOccupiedPosLeft,
                     recentSunk
                     );
@@ -94,6 +83,7 @@ export default function Player(initialTurn, player, difficulty, num) {
         refillLegalAtks,
         playerNum,
         getAiLegalAtks() { return aiLegalAtks; },
-        setAiLegalAtks(arr) { aiLegalAtks = arr; }
+        setAiLegalAtks(arr) { aiLegalAtks = arr; },
+        setOpponentOccupiedPosLeft(val) { opponentOccupiedPosLeft = val; }
     }
 }

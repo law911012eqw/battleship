@@ -49,11 +49,12 @@ export const autoBattle = (P1, P2) => {
 
 const AIAttack = (attacker, defender) => {
     if (attacker.turn) {
+        attacker.setOpponentOccupiedPosLeft(defender.gameboard.getOccupiedPos());
         const prevShipsLeft = defender.gameboard.getCurrentTotalShips();
         const atk = attacker.aiMove(attacker.aiLegalAtks);
         const ships = defender.gameboard.shipsOnTheBoard;
         defender.gameboard.receiveAttack(atk[0], atk[1], ships);
-        attacker.opponentOccupiedPosLeft = defender.gameboard.getOccupiedPos();
+
         if(prevShipsLeft !== defender.gameboard.getCurrentTotalShips()){
             attacker.recentSunk = true;
         }
@@ -63,7 +64,6 @@ const AIAttack = (attacker, defender) => {
 //Attack the ships of the other party
 export const playerAttack = (attacker, defender, x, y) => {
     const shots = attacker.getAiLegalAtks();
-    console.log(shots);
     if(!shots.some(o => o[0] === x && o[1] === y)) return true;
     const ships = defender.gameboard.shipsOnTheBoard;
     attacker.toggleLegality(x,y);
@@ -84,5 +84,9 @@ export const resetGame = (player) => {
     if (player.isWinner) { player.isWinner = false; }
     player.gameboard.resetBoard();
     const newLegalShots =  player.refillLegalAtks();
+    if(!player.isHuman){
+        player.aiLegalAtks = newLegalShots;
+        return;
+    }
     player.setAiLegalAtks(newLegalShots);
 }

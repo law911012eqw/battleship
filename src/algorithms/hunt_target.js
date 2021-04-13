@@ -4,54 +4,65 @@
 //between the remaining neighboring squares until it hits. If ship is still alive, it'll continue to it's direction
 //which is either vertical or horizontal; diagonal is an illegal move.
 export default function kingsMove(
-    gb,
     moves,
-    vertical,
-    horizontal,
     firstHuntAtk,
-    recentDirectionalAtk,
+    setFirstHunt,
+    isVertical,
     posNum,
     recentSunk
-    ) {
+) {
 
+    console.log(firstHuntAtk);
+    console.log(posNum);
+    console.log(isVertical);
     //These are the key to possible shots during target mode
     let move;
     let index = Math.floor(Math.random() * moves.length - 1);
 
-       //Hunt mode is activated
-    if(firstHuntAtk !== null) {
-        const directionIndex = Math.floor(Math.random() * 1);
-        let nextIndex;
-        directionIndex ? nextIndex = horizontal.splice(Math.floor(Math.random() * horizontal.length - 1), 1)
-        : nextIndex = vertical.splice(Math.floor(Math.random() * vertical.length - 1), 1);
-        if(recentDirectionalAtk === 'h'){
-            if(horizontal.length < 2){
-                nextIndex = horizontal[0];
-                recentDirectionalAtk = 'v';
-            }
-            
-        } else if (recentDirectionalAtk === 'v'){
-            if(vertical.length < 2){
-                nextIndex = horizontal[0];
-                recentDirectionalAtk = 'h';
-            }
-        }
-        //1 or true for horizontal, otherwise vertical
-        directionIndex ? recentDirectionalAtk = 'h' : recentDirectionalAtk = 'v';
-        move = moves.splice(firstHuntAtk + nextIndex, 1);
-        const newHuntIndex = firstHuntAtk < index ? firstHuntAtk - 1 : firstHuntAtk;
-        firstHuntAtk = newHuntIndex;
+    const random = (arr) => {
+        const i = Math.floor(Math.random() * 2);
+        return arr[i];
+    }
+    const availableTargetShot = (target, arr, axis) => {
+        const prevShot = firstHuntAtk;
+        console.log(target, axis);
+        const shot = arr.findIndex((m => axis === 'y' ? m[0][1] === prevShot[1] + target && m[0][0] === prevShot[0]
+            : m[0][0] === prevShot[0] + target && m[0][1] === prevShot[1]));
+        if (shot === -1) {
+            generateTargetShot(arr);
+        };
+        console.log('only once');
+        return arr.splice(index, 1);;
+    }
+    const generateTargetShot = (arr) => {
+        console.log(arr);
+        let target = random([1, -1]);
+        let axis = random(['x', 'y']);
+        availableTargetShot(target, arr, axis);
+    }
+    //Hunt mode is activated
+    if (firstHuntAtk !== null) {
+        // const directionIndex = Math.floor(Math.random() * 1);
+        const nextIndex = generateTargetShot(moves);
+        move = moves.splice(nextIndex, 1);
 
-    } else {
+    } else { //Just the normal random attack
         move = moves.splice(index, 1);
     }
-    if(posNum.some(m => m[0] === move[0] && m[1] === move[1])){
-        firstHuntAtk = index;
+    function transitionToTargetMode() {
+        if (posNum.some(m => m.x === move[0][0] && m.y === move[0][1])) {
+            setFirstHunt(move);
+        }
     }
-    if (recentSunk){
-        firstHuntAtk = null;
-        recentSunk = !recentSunk;
+
+    function transitionToHuntMode() {
+        if (recentSunk) {
+            setFirstHunt(null);
+            recentSunk = !recentSunk;
+        }
     }
+    transitionToTargetMode();
+    transitionToHuntMode()
     console.log(move);
     return [].concat(...move);
 }

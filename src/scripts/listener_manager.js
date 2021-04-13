@@ -1,7 +1,6 @@
 export default function ListenerManager() {
     let listeners = {};
     let nextId = 1;
-    console.log(listeners);
     // Returns an id for the listener.
     this.add = (elem, ...args) => {
       (elem.addEventListener || elem.add || elem.addListener).call(elem, ...args);
@@ -31,7 +30,6 @@ export default function ListenerManager() {
       listeners = {};
       Object.keys(old).forEach((id) => {
         const listener = old[id];
-        console.log(listener);
         if (listener.args < 2) {
           throw new Error('too few args');
         }
