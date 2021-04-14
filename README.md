@@ -20,7 +20,7 @@ There are two gamemodes: Player vs Player (PvP) and Player vs AI with an impleme
 ### Issues to fix
 **Minor**:
 * First attack from one of the player is not listed as an outcome.
-* Hard difficulty is yet to be implemented
+* Switching issue between hunt attack and target attack
 
 ### TODOS
 4/4/20

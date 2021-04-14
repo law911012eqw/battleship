@@ -56,7 +56,7 @@ const AIAttack = (attacker, defender) => {
         defender.gameboard.receiveAttack(atk[0], atk[1], ships);
 
         if(prevShipsLeft !== defender.gameboard.getCurrentTotalShips()){
-            attacker.recentSunk = true;
+            attacker.setRecentSunk(true);
         }
     } 
 }

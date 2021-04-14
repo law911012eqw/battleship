@@ -33,11 +33,34 @@ export default function Player(initialTurn, player, difficulty, num) {
     //array of legal attacks - used by an AI
     let aiLegalAtks = randomPlays(10);
     let recentSunk = false;
+    function setRecentSunk(bool) { recentSunk = bool; }
 
     //Special variable for Player(AI) with higher difficulty
     let firstHuntAtk = null; 
+    let sameShipHuntShot = null;
     function setFirstHunt(val) { firstHuntAtk = val; }
-    let isVertical; //either vertical or horizontal (v/h)
+    function setSameShipHuntShot(val) { sameShipHuntShot = val; }
+    let availableTargetShots = [
+        {
+            target: 1,
+            axis: 'x',
+        },
+        {
+            target: -1,
+            axis: 'x',
+        },
+        {
+            target: 1,
+            axis: 'y',
+        },
+        {
+            target: -1,
+            axis: 'y',
+        }
+    ]
+    function setAvailableTargetShots(arr) {
+        availableTargetShots = arr;
+    }
 
     const refillLegalAtks = () => {
         return randomPlays(10);
@@ -56,9 +79,13 @@ export default function Player(initialTurn, player, difficulty, num) {
                     moves,
                     firstHuntAtk,
                     setFirstHunt,
-                    isVertical,
+                    sameShipHuntShot,
+                    setSameShipHuntShot,
+                    availableTargetShots,
+                    setAvailableTargetShots,
                     opponentOccupiedPosLeft,
-                    recentSunk
+                    recentSunk,
+                    setRecentSunk
                     );
             }
             const move = moves.splice(randomNum(moves.length - 1), 1);
@@ -84,6 +111,7 @@ export default function Player(initialTurn, player, difficulty, num) {
         playerNum,
         getAiLegalAtks() { return aiLegalAtks; },
         setAiLegalAtks(arr) { aiLegalAtks = arr; },
-        setOpponentOccupiedPosLeft(val) { opponentOccupiedPosLeft = val; }
+        setOpponentOccupiedPosLeft(val) { opponentOccupiedPosLeft = val; },
+        setRecentSunk
     }
 }
