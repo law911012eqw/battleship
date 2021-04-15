@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 import ReturnToMenu from './ReturnToMenu';
 import Outcomes from './Outcomes';
@@ -25,7 +25,7 @@ export default function Battle({ gamemode, difficulty }) {
     const [outcomesVisibility, setOutcomesVisibility] = useState(false);
 
     //Set the current player
-    const [current, setCurrent] = useState({ turn: 1, isHuman: Player1.turn });
+    const [current, setCurrent] = useState({ turn: 1, isHuman: Player1.isHuman });
 
     //Used as a fake count to trigger an associated useEffect as a dependency value
     const [fakeCount, setFakeCount] = useState(0);
@@ -54,7 +54,6 @@ export default function Battle({ gamemode, difficulty }) {
 
     const handleVisibilityButton = () => {
         setOutcomesVisibility(!outcomesVisibility);
-        setAllowOutcomes(false);
     }
 
     //Reset all the propety of palyer and gameboard functions to initial state
@@ -120,30 +119,6 @@ export default function Battle({ gamemode, difficulty }) {
     }
 
     const enablePrintOutcomes = () => {
-        if (allowOutcomes === 0) {
-            return (
-                <Outcomes
-                    p={P1.turn}
-                    currentPlayer={P1.turn ? P2.displayName : P1.displayName}
-                    categoryNum={allowOutcomes}
-                    coordinate={null}
-                    outcomesArr={outcomesArr}
-                    setOutcomesArr={setOutcomesArr}
-                />
-            )
-        }
-        else if (allowOutcomes === 2) {
-            return (
-                <Outcomes
-                    p={P1.turn}
-                    currentPlayer={P1.turn ? P2.displayName : P1.displayName}
-                    categoryNum={allowOutcomes}
-                    coordinate={coordinate}
-                    outcomesArr={outcomesArr}
-                    setOutcomesArr={setOutcomesArr}
-                />
-            )
-        }
         return (
             <Outcomes
                 p={P1.turn}
@@ -487,7 +462,7 @@ export default function Battle({ gamemode, difficulty }) {
                 {(P1 !== null || P2 !== null) && width > 500 ? displayTurnOrWinner() : null}
                 {canvasContainer(cv2Ref, SIZE, "cv2", P2)}
             </div>
-            {outcomesArr.length !== 0 && outcomesVisibility ? enablePrintOutcomes() : null}
+            {outcomesVisibility ? enablePrintOutcomes() : null}
         </div>
     )
 }

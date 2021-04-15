@@ -1,6 +1,6 @@
 {
-  "name": "clone",
-  "version": "0.1.0",
+  "name": "Battleship",
+  "version": "0.1.4",
   "private": true,
   "homepage": "/battleship",
   "dependencies": {

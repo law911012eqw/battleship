@@ -16,9 +16,7 @@ export default function huntTarget(
     setRecentSunk
 ) {
 
-    console.log(moves);
-    console.log(availableTargetShots);
-    console.log(firstHuntAtk, sameShipHuntShot);
+    console.log(moves.length);
     let move;     //This is the chosen move after the process of choosing possible attacks
     let index = Math.floor(Math.random() * moves.length - 1);
 
@@ -56,7 +54,6 @@ export default function huntTarget(
     //3rd arg refers to the center of the possibilities during the target mode
     const availableTargetShot = (arr, nextShot, attackRef) => {
         if(attackRef === null) return index;
-        console.log(nextShot);
         const target = nextShot.target;
         const axis = nextShot.axis;
         const prevShot =  attackRef ? sameShipHuntShot[sameShipHuntShot.length - 1] : firstHuntAtk;
@@ -70,15 +67,13 @@ export default function huntTarget(
         //const chooseBetweenFirstOrRecentAtk = firstHuntAtk !== sameShipHuntShot && sameShipHuntShot !== null;
         let atkRef = false;
         if (checkIfThereAreNoPossibleAttacks(moves, firstHuntAtk)) {
-            console.log('no choice, go back to first hunt');
             atkRef = false;
         } else if(checkIfThereAreNoPossibleAttacks(moves, sameShipHuntShot)){
-            console.log('keep going with recent successful attack');
             atkRef = true;
         } 
         else if (!sameShipHuntShot.length) {
             atkRef = null;
-        } else { atkRef = false; }
+        }
         
         let nextShot = random(availableTargetShots);
         return availableTargetShot(arr, ...nextShot, atkRef);
@@ -122,10 +117,8 @@ export default function huntTarget(
     
     function transitionToTargetMode() {
         if (firstHuntAtk === null && posNum.some(m => m.x === move[0][0] && m.y === move[0][1])) {
-            console.log('The First Attack');
             setFirstHunt(...move);
         } else if (firstHuntAtk !== null && posNum.some(m => m.x === move[0][0] && m.y === move[0][1])) {
-            console.log('Recent successful Attack');
             const recentTargetShots =  sameShipHuntShot;
             recentTargetShots.push(...move);
             setSameShipHuntShot(recentTargetShots);
@@ -136,12 +129,9 @@ export default function huntTarget(
 
     function transitionToHuntMode() {
         if (recentSunk) {
-            console.log('sunken ship');
             setFirstHunt(null);
             setRecentSunk(!recentSunk);
             refillAvailableShots();
-            move = moves.splice(index, 1);
-            return [].concat(...move);
         }
     }
 

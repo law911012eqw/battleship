@@ -209,7 +209,7 @@ select {
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
-  margin-top: 24px;
+  margin: 24px 0;
 }
 .display-turn{
   align-self: center;

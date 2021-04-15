@@ -12,11 +12,6 @@ export default function Outcomes({
         const addingListInArr = () => {
             if(categoryNum === null) return;
             switch (categoryNum) {
-                case 0:
-                    outcomesArr.push(
-                        `${currentPlayer} won the battleship!`
-                    )
-                    break;
                 case 2:
                     outcomesArr.push(
                         `${currentPlayer} successfully hit an attack at ${coordinate}.`
@@ -36,7 +31,6 @@ export default function Outcomes({
             setOutcomesArr(newArr);
         }
         addingListInArr();
-        console.log(outcomesArr);
     }, [p, currentPlayer, outcomesArr, coordinate]);
     const outcomesInListFormat =  outcomesArr.map((txt, id)=> {
             return (
