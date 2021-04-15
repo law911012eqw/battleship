@@ -429,7 +429,7 @@ export default function Battle({ gamemode, difficulty }) {
             }
             //Check if current player (by turn) is an ai then proceeds
             if (!current.isHuman) {
-                await attackDelay(1);
+                await attackDelay(1100);
                 return;
             }
             startHumanAttack();

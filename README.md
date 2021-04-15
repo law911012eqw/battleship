@@ -15,7 +15,7 @@ These are the following ships exactly as the classes of ships from the old game.
 | Destroyer | 2 |
 
 ### Gamemodes 
-There are two gamemodes: Player vs Player (PvP) and Player vs AI with an implementation of two different difficulties. Additionally, a gamemode AI vs AI is included specifically for debugging purposes or just to have fun with coding.
+There are two gamemodes: Player vs Player (PvP) and Player vs AI with an implementation of two different difficulties. Additionally, a gamemode AI vs AI is included specifically for debugging purposes or just to have fun with coded implementations.
 
 ### Issues to fix
 **Minor**:
