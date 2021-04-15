@@ -37,7 +37,7 @@ export default function Player(initialTurn, player, difficulty, num) {
 
     //Special variable for Player(AI) with higher difficulty
     let firstHuntAtk = null; 
-    let sameShipHuntShot = null;
+    let sameShipHuntShot = [];
     function setFirstHunt(val) { firstHuntAtk = val; }
     function setSameShipHuntShot(val) { sameShipHuntShot = val; }
     let availableTargetShots = [

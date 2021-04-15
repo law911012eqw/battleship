@@ -453,7 +453,7 @@ export default function Battle({ gamemode, difficulty }) {
                 return;
             }
             //Check if current player (by turn) is an ai then proceeds
-            if (start && !current.isHuman) {
+            if (!current.isHuman) {
                 await attackDelay(1);
                 return;
             }
@@ -461,7 +461,7 @@ export default function Battle({ gamemode, difficulty }) {
             return;
         }
         const startGame = () => {
-            if (!winner) {
+            if (start && !winner) {
                 checkCurrentPlayerTurn();
             }
             return;

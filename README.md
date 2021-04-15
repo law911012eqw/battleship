@@ -20,14 +20,15 @@ There are two gamemodes: Player vs Player (PvP) and Player vs AI with an impleme
 ### Issues to fix
 **Minor**:
 * First attack from one of the player is not listed as an outcome.
-* Switching issue between hunt attack and target attack
+* AI not starting after state start was toggled.
+* Sometimes there's an undefined error when AI only has few legal attacks left.
 
 ### TODOS
 4/4/20
 - [X] Implement PvP toggle visibility functionality so players cannot see each other's ships.
 - [X] Created randomzie ships functionality as the main feature to place ships.
 - [X] Design outcome in a list format during the game.
-- [ ] Create secondary difficulty mainly to polish AI move ruleset.
+- [X] Create secondary difficulty mainly to polish AI move ruleset.
 - [X] The clean up function for player is not accessible after clicking the restart button.
 
 ## Available Scripts
